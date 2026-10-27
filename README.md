@@ -12,6 +12,8 @@ Install with the [`skills` CLI](https://www.npmjs.com/package/skills) (`npx skil
   `npx skills add vercel-labs/agent-skills --skill web-design-guidelines`
 - [security-audit](https://github.com/cloudflare/security-audit-skill) (cloudflare/security-audit-skill): security guidance and full codebase security audits.
   `npx skills add https://github.com/cloudflare/security-audit-skill --skill security-audit`
+- [ponytail](https://github.com/DietrichGebert/ponytail) (DietrichGebert/ponytail): "lazy senior dev" mode, the smallest change that fully solves the task, plus ponytail-audit, ponytail-review, ponytail-debt, ponytail-gain and ponytail-help.
+  `npx skills add DietrichGebert/ponytail` (Hermes: `hermes plugins install DietrichGebert/ponytail --enable`)
 
 See [skills.md](skills.md) for the full list of skills inside each pack.
 
