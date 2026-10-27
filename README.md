@@ -17,6 +17,22 @@ Install with the [`skills` CLI](https://www.npmjs.com/package/skills) (`npx skil
 
 See [skills.md](skills.md) for the full list of skills inside each pack.
 
+## Tools
+
+- [rtk](https://github.com/rtk-ai/rtk) (Rust Token Killer): a CLI proxy that compresses command output (git, ls, tests, gh, docker...) before the AI agent reads it, so it uses fewer tokens. Docs: [rtk-ai.app/guide](https://www.rtk-ai.app/guide).
+  - Install (official README):
+    - `brew install rtk` (macOS / Linux)
+    - `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh`
+    - `winget install rtk-ai.rtk` (Windows)
+  - Check: `rtk --version` and `rtk gain` (must show the savings dashboard; another crate named "rtk" exists).
+  - Hook it into your agents:
+    - Claude Code: `rtk init -g`
+    - Codex: `rtk init -g --codex`
+    - OpenCode: `rtk init -g --opencode`
+    - Cursor: `rtk init -g --agent cursor`
+    - Hermes: `rtk init --agent hermes`
+  - Restart the agent afterwards. See savings with `rtk gain`.
+
 ## Agents
 
 _Nothing yet._ Put agent definitions in [`agents/`](agents/).
