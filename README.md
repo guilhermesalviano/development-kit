@@ -33,6 +33,16 @@ See [skills.md](skills.md) for the full list of skills inside each pack.
     - Hermes: `rtk init --agent hermes`
   - Restart the agent afterwards. See savings with `rtk gain`.
 
+## Spec-driven development
+
+[`sdd/`](sdd/) is the PRD → spec → tasks workflow (from koris-bot), ready to drop into a project:
+
+- `sdd/specs/index.md` and `sdd/specs/templates/` → copy to the project's `specs/`.
+- `sdd/AGENTS-snippet.md` → paste into the project's `AGENTS.md` (and point `CLAUDE.md` at it).
+- `sdd/spec-ac-coverage.test.ts` → copy to `test/` (Bun test). It fails when a `Status: done` spec has unticked criteria or no test named with each `AC<n>` id.
+
+New features live in `specs/<nnn>-<slug>/`. Adjust the test commands in the templates and `index.md` (`bun run test`, `bun run typecheck`) to the project.
+
 ## Agents
 
 _Nothing yet._ Put agent definitions in [`agents/`](agents/).
