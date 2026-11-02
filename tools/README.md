@@ -103,18 +103,3 @@ END {
 ./toolbox mac-monitor install-service
 ./toolbox mac-monitor uninstall-service
 ```
-
----
-
-## 🪟 Ferramenta: `hypr-desktop`
-
-Desktop Hyprland com visual de Omarchy (barra Waybar no topo, lançador
-fuzzel no Super + Espaço) para Debian 13. Instala o Hyprland pelo
-`trixie-backports` e mantém o GNOME; escolha a sessão na tela de login.
-
-```bash
-./toolbox hypr-desktop install   # pacotes (pede sudo) + configurações
-./toolbox hypr-desktop configs   # só recopia as configurações
-```
-
-Veja [`hypr-desktop/README.md`](hypr-desktop/README.md) para atalhos e detalhes.

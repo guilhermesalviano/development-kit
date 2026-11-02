@@ -35,12 +35,6 @@ Guidance for AI coding agents working in this repository.
 - `./toolbox aliases status` — Show which rc files have the aliases installed.
 - `./toolbox aliases list` — List all available aliases and what they expand to.
 
-### Hypr Desktop (`hypr-desktop`) — Debian 13 only
-- `./toolbox hypr-desktop install` — Enable `trixie-backports` (writes `/etc/apt/sources.list.d/debian-backports.sources`, confirms first), install Hyprland + hypridle/hyprlock/portal/polkit agent from backports and Waybar, fuzzel, mako, Alacritty, swaybg, swayosd etc. from main, then copy configs. Needs a real terminal (sudo password + prompts).
-- `./toolbox hypr-desktop configs` — Copy `tools/hypr-desktop/config/` into `~/.config` (changed files backed up to `~/.local/state/toolbox-hypr-desktop/<timestamp>/`; runs `hyprctl reload` when Hyprland is running).
-- `./toolbox hypr-desktop check` / `status` — `Hyprland --verify-config` on the installed config / show packages, backports, session and config state.
-- Omarchy-look (Tokyo Night) Hyprland session alongside GNOME. Config targets Hyprland 0.55 syntax (e.g. `gesture = 3, horizontal, workspace`).
-
 ### Swain Macros (`swain-macros`) — GUI app
 - `./toolbox swain-macros install` — One-time setup on Ubuntu/GNOME (runs `install.sh`): apt packages, udev rule for the mouse and `/dev/uinput`, app menu entry. Run as the normal user; it calls `sudo` itself.
 - `./toolbox swain-macros [--background]` — Open the GTK app that maps macros to the Redragon Swain side buttons (`--background` starts hidden).
@@ -84,10 +78,6 @@ Guidance for AI coding agents working in this repository.
     - `manage.sh` — Tool-specific controller (`start`, `stop`, `status`, `report`, `logs`, `install-service`, `uninstall-service`).
     - `launchd/com.guilhermesalviano.toolbox-monitor.plist.template` — LaunchAgent definition for macOS boot/login persistence. Has no absolute paths baked in; `manage.sh install-service` renders it with the actual `ROOT_DIR`/`HOME` via `sed` before installing, since a clone can live anywhere.
     - `README.md` — Tool documentation (first `# Title` line is shown in `./toolbox list`).
-  - `tools/hypr-desktop/` — Omarchy-style Hyprland desktop for Debian 13:
-    - `run.sh` — Entry point (`install`, `packages`, `configs`, `check`, `status`).
-    - `config/` — Files copied verbatim into `~/.config`: `hypr/` (`hyprland.conf`, `hypridle.conf`, `hyprlock.conf`, `scripts/` power menu, screenshot, wallpaper), `waybar/`, `fuzzel/`, `mako/`, `alacritty/`.
-    - `README.md` — Tool documentation (keybindings).
   - `tools/_template/` — Starter boilerplate for new tools (`run.sh` and `README.md`).
 - `apps/` — GUI applications; dispatched by `./toolbox` just like `tools/`:
   - `apps/README.md` — User documentation (Portuguese) for the apps in `apps/`; the root `README.md` only links to it.
