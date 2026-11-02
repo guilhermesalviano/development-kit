@@ -30,7 +30,7 @@ Guidance for AI coding agents working in this repository.
 - `./toolbox disk-cleaner --docker-volumes` — Also offer to prune unused Docker volumes (off by default; may contain database data).
 
 ### Aliases (`aliases`)
-- `./toolbox aliases install` — Add Tool-Box shell aliases (`tb`, `tb-clean`, `tb-mon-*`, etc.) to `~/.zshrc`/`~/.bashrc`/`~/.bash_profile`, detected from `$SHELL`. Idempotent, marked by `# >>> tool-box aliases >>>` / `# <<< tool-box aliases <<<`.
+- `./toolbox aliases install` — Add Tool-Box shell aliases (`tb`, `tb-clean`, `tb-mon-*`, etc.) to `~/.zshrc`/`~/.bashrc`/`~/.bash_profile`, detected from the account login shell (`getent passwd` / `dscl`, so it is correct right after a `chsh`), falling back to `$SHELL`. Idempotent, marked by `# >>> tool-box aliases >>>` / `# <<< tool-box aliases <<<`.
 - `./toolbox aliases uninstall` — Remove that marked block.
 - `./toolbox aliases status` — Show which rc files have the aliases installed.
 - `./toolbox aliases list` — List all available aliases and what they expand to.

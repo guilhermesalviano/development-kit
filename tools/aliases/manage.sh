@@ -24,8 +24,20 @@ Comandos:
 EOF
 }
 
+# Shell de login da conta (o que o chsh muda); o $SHELL só reflete a sessão
+# atual e fica desatualizado depois de um chsh até o próximo login.
+login_shell() {
+  local user="${USER:-$(id -un)}" sh=""
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    sh=$(dscl . -read "/Users/${user}" UserShell 2>/dev/null | awk '{print $2}')
+  elif command -v getent >/dev/null 2>&1; then
+    sh=$(getent passwd "${user}" | cut -d: -f7)
+  fi
+  echo "${sh:-${SHELL:-}}"
+}
+
 detect_rc_files() {
-  case "$(basename "${SHELL:-}")" in
+  case "$(basename "$(login_shell)")" in
     zsh)
       echo "${HOME}/.zshrc"
       ;;
@@ -108,7 +120,7 @@ cmd_uninstall() {
     remove_block_from_file "${rc}"
   done < <(detect_rc_files)
   echo ""
-  echo "Abra um novo terminal (ou rode 'exec \$SHELL') para os atalhos saírem da sessão atual."
+  echo "Abra um novo terminal (ou rode 'exec $(basename "$(login_shell)")') para os atalhos saírem da sessão atual."
 }
 
 cmd_status() {

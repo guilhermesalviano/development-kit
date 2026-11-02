@@ -16,6 +16,19 @@ OS="$(uname -s)"
 
 have() { command -v "$1" >/dev/null 2>&1; }
 
+# Shell de login da conta (o que o chsh muda). O $SHELL só reflete a sessão
+# atual: depois de um chsh ele continua apontando para o shell antigo até o
+# próximo login, então não serve para decidir nada aqui.
+login_shell() {
+  local sh=""
+  if [[ "${OS}" == "Darwin" ]]; then
+    sh=$(dscl . -read "/Users/${USER:-$(id -un)}" UserShell 2>/dev/null | awk '{print $2}')
+  elif have getent; then
+    sh=$(getent passwd "${USER:-$(id -un)}" | cut -d: -f7)
+  fi
+  echo "${sh:-${SHELL:-}}"
+}
+
 confirm() {
   local reply
   read -r -p "$1 [y/N] " reply </dev/tty
@@ -137,13 +150,27 @@ EOF
   fi
 fi
 
-if have zsh && [[ "$(basename "${SHELL:-}")" != zsh ]]; then
-  if confirm "Tornar o zsh o shell padrão? (chsh -s $(command -v zsh))"; then
-    # Atualiza $SHELL para os aliases (logo abaixo) irem para o ~/.zshrc.
-    chsh -s "$(command -v zsh)" && export SHELL="$(command -v zsh)" || echo "Falhou — rode 'chsh -s $(command -v zsh)' manualmente." >&2
+RELOGIN_NEEDED=false
+if have zsh; then
+  if [[ "$(basename "$(login_shell)")" == zsh ]]; then
+    echo "zsh já é o shell padrão da conta."
+  elif confirm "Tornar o zsh o shell padrão? (chsh -s $(command -v zsh))"; then
+    chsh -s "$(command -v zsh)" || echo "Falhou — rode 'chsh -s $(command -v zsh)' manualmente." >&2
   else
     echo "Pulado. Rode 'chsh -s $(command -v zsh)' quando quiser."
   fi
+fi
+
+# Os aliases (logo abaixo) escolhem o rc file pelo $SHELL: alinha com o shell
+# de login para eles irem para o ~/.zshrc mesmo rodando o script a partir do bash.
+LOGIN_SHELL="$(login_shell)"
+[[ -n "${LOGIN_SHELL}" ]] && export SHELL="${LOGIN_SHELL}"
+# O pai deste script é o shell interativo que o rodou.
+if [[ "$(basename "${LOGIN_SHELL}")" == zsh ]] \
+   && [[ "$(basename "$(ps -o comm= -p "${PPID}" 2>/dev/null)")" != zsh ]]; then
+  RELOGIN_NEEDED=true
+  echo "Este terminal ainda está em outro shell: os plugins do zsh só aparecem num shell zsh."
+  echo "Saia e entre de novo na sessão (ou rode 'exec zsh' agora) para usar o zsh."
 fi
 
 # --- Aliases -----------------------------------------------------------
@@ -352,4 +379,8 @@ fi
 section "Pronto"
 "${ROOT_DIR}/toolbox" list
 echo ""
-echo "Abra um novo shell (ou 'source' o seu rc file) para os atalhos entrarem em vigor."
+if [[ "${RELOGIN_NEEDED}" == true ]]; then
+  echo "Saia e entre de novo na sessão (ou rode 'exec zsh') para usar o zsh, os plugins e os atalhos."
+else
+  echo "Abra um novo shell (ou 'source' o seu rc file) para os atalhos entrarem em vigor."
+fi

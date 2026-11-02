@@ -48,7 +48,7 @@ Veja a lista atualizada a qualquer momento com `./toolbox aliases list`.
 
 ```bash
 # Instalar (adiciona um bloco marcado ao ~/.zshrc ou ~/.bashrc/.bash_profile,
-# detectado a partir do seu $SHELL):
+# detectado pelo shell de login da sua conta, mesmo logo depois de um chsh):
 ./toolbox aliases install
 
 # Recarregar o shell atual para começar a usar:
