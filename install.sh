@@ -319,63 +319,6 @@ else
   pkg_install python3 || true
 fi
 
-# --- Omarchy (Ask AI + Search Web) -----------------------------------------
-
-section "Plugins do Omarchy (Ask AI, Search Web, Calendar)"
-if ! have omarchy; then
-  echo "Omarchy não detectado nesta máquina — pulando (esses plugins só existem lá)."
-else
-  echo "Omarchy detectado."
-  if ! have jq; then
-    pkg_install jq || true
-  fi
-
-  agent=$(omarchy default agent 2>/dev/null || true)
-  if have opencode; then
-    echo "O 'Ask AI' responde com o OpenCode (defina TOOLBOX_AGENT para usar outro agente)."
-  elif [[ -z ${agent} ]]; then
-    echo "Nenhum agente padrão no Omarchy — o 'Ask AI' precisa de um para responder."
-    echo "Instale o OpenCode ou escolha em Setup → Default → Agent (OpenCode, Codex ou Claude Code respondem dentro do menu)."
-  elif [[ ${agent} != codex && ${agent} != claude && ${agent} != opencode ]]; then
-    echo "Agente padrão: ${agent}. O 'Ask AI' vai abrir as perguntas no terminal dele;"
-    echo "com OpenCode, Codex ou Claude Code a resposta aparece dentro do menu."
-  fi
-
-  if confirm "Instalar o plugin 'Search Web' (toolbox.web-search)?"; then
-    "${ROOT_DIR}/omarchy/web-search/install.sh" || echo "Falhou — veja a mensagem acima." >&2
-  else
-    echo "Pulado. Rode './omarchy/web-search/install.sh' quando quiser."
-  fi
-
-  if confirm "Instalar o plugin 'Calendar' (toolbox.calendar, eventos do Google Calendar no relógio)?"; then
-    if "${ROOT_DIR}/omarchy/calendar/install.sh"; then
-      echo "Adicione sua agenda depois com: ./toolbox calendar add"
-    else
-      echo "Falhou — veja a mensagem acima." >&2
-    fi
-  else
-    echo "Pulado. Rode './omarchy/calendar/install.sh' quando quiser."
-  fi
-
-  if confirm "Instalar o plugin 'Orca' (toolbox.orca, workspaces e agentes do Orca na barra)?"; then
-    "${ROOT_DIR}/omarchy/orca/install.sh" || echo "Falhou — veja a mensagem acima." >&2
-  else
-    echo "Pulado. Rode './omarchy/orca/install.sh' quando quiser."
-  fi
-
-  if confirm "Instalar o plugin 'CPU Temp' (toolbox.cpu-temp, temperatura da CPU sempre na barra)?"; then
-    "${ROOT_DIR}/omarchy/cpu-temp/install.sh" || echo "Falhou — veja a mensagem acima." >&2
-  else
-    echo "Pulado. Rode './omarchy/cpu-temp/install.sh' quando quiser."
-  fi
-
-  if confirm "Instalar o plugin 'Ask AI' (toolbox.ask-agent, substitui o menu do Omarchy e reinicia o shell)?"; then
-    "${ROOT_DIR}/omarchy/ask-agent/install.sh" || echo "Falhou — veja a mensagem acima." >&2
-  else
-    echo "Pulado. Rode './omarchy/ask-agent/install.sh' quando quiser."
-  fi
-fi
-
 section "Pronto"
 "${ROOT_DIR}/toolbox" list
 echo ""

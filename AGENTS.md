@@ -4,14 +4,14 @@ Guidance for AI coding agents working in this repository.
 
 ## What this is
 
-`tool-box` is a modular collection of server and macOS automation scripts, background monitors, and system utilities. Each tool lives in an isolated folder under `tools/<name>/` — or under `apps/<name>/` for GUI applications, or `omarchy/<name>/` when it only works on the Omarchy desktop — and is dispatched through the unified `./toolbox` CLI.
+`tool-box` is a modular collection of server and macOS automation scripts, background monitors, and system utilities. Each tool lives in an isolated folder under `tools/<name>/` — or under `apps/<name>/` for GUI applications — and is dispatched through the unified `./toolbox` CLI.
 
 ---
 
 ## Commands
 
 ### Fresh-machine setup (`./install.sh`)
-- `./install.sh` — Interactive, idempotent setup for a new clone: first offers zsh + Oh My Zsh (unattended; old `~/.zshrc` saved as `~/.zshrc.pre-oh-my-zsh`) with the `zsh-autosuggestions`, `zsh-syntax-highlighting` and `fast-syntax-highlighting` plugins cloned into `$ZSH_CUSTOM/plugins`, enabled via a `# >>> tool-box zsh plugins >>>` block in `~/.zshrc` (only `fast-syntax-highlighting` is sourced — the two highlighters conflict; `zsh-syntax-highlighting` is the fallback), and `chsh` to zsh. This runs before the aliases step so aliases land in the new `~/.zshrc`. Then offers to install shell aliases, checks/offers to install each tool's external dependency (`aria2`, `python3`, `jq`, `ripgrep`), offers `git-delta` and, once `delta` is on `PATH`, sets it as the global git pager (`core.pager`, `interactive.diffFilter`, `delta.navigate`, `delta.side-by-side`, `diff.algorithm histogram`; warns before replacing another pager), bootstraps the mac-monitor virtualenv, and — only when an `omarchy` CLI is detected — offers to install the Ask AI / Search Web Omarchy plugins. Confirms before any system-modifying step (package install, LaunchAgent, shell rc edits); safe to re-run.
+- `./install.sh` — Interactive, idempotent setup for a new clone: first offers zsh + Oh My Zsh (unattended; old `~/.zshrc` saved as `~/.zshrc.pre-oh-my-zsh`) with the `zsh-autosuggestions`, `zsh-syntax-highlighting` and `fast-syntax-highlighting` plugins cloned into `$ZSH_CUSTOM/plugins`, enabled via a `# >>> tool-box zsh plugins >>>` block in `~/.zshrc` (only `fast-syntax-highlighting` is sourced — the two highlighters conflict; `zsh-syntax-highlighting` is the fallback), and `chsh` to zsh. This runs before the aliases step so aliases land in the new `~/.zshrc`. Then offers to install shell aliases, checks/offers to install each tool's external dependency (`aria2`, `python3`, `jq`, `ripgrep`), offers `git-delta` and, once `delta` is on `PATH`, sets it as the global git pager (`core.pager`, `interactive.diffFilter`, `delta.navigate`, `delta.side-by-side`, `diff.algorithm histogram`; warns before replacing another pager), bootstraps the mac-monitor virtualenv. Confirms before any system-modifying step (package install, LaunchAgent, shell rc edits); safe to re-run.
 
 ### Global CLI (`./toolbox`)
 - `./toolbox list` — List all installed tools and their descriptions.
@@ -35,42 +35,15 @@ Guidance for AI coding agents working in this repository.
 - `./toolbox aliases status` — Show which rc files have the aliases installed.
 - `./toolbox aliases list` — List all available aliases and what they expand to.
 
+### Hypr Desktop (`hypr-desktop`) — Debian 13 only
+- `./toolbox hypr-desktop install` — Enable `trixie-backports` (writes `/etc/apt/sources.list.d/debian-backports.sources`, confirms first), install Hyprland + hypridle/hyprlock/portal/polkit agent from backports and Waybar, fuzzel, mako, Alacritty, swaybg, swayosd etc. from main, then copy configs. Needs a real terminal (sudo password + prompts).
+- `./toolbox hypr-desktop configs` — Copy `tools/hypr-desktop/config/` into `~/.config` (changed files backed up to `~/.local/state/toolbox-hypr-desktop/<timestamp>/`; runs `hyprctl reload` when Hyprland is running).
+- `./toolbox hypr-desktop check` / `status` — `Hyprland --verify-config` on the installed config / show packages, backports, session and config state.
+- Omarchy-look (Tokyo Night) Hyprland session alongside GNOME. Config targets Hyprland 0.55 syntax (e.g. `gesture = 3, horizontal, workspace`).
+
 ### Swain Macros (`swain-macros`) — GUI app
 - `./toolbox swain-macros install` — One-time setup on Ubuntu/GNOME (runs `install.sh`): apt packages, udev rule for the mouse and `/dev/uinput`, app menu entry. Run as the normal user; it calls `sudo` itself.
 - `./toolbox swain-macros [--background]` — Open the GTK app that maps macros to the Redragon Swain side buttons (`--background` starts hidden).
-
-### Ask AI (`ask-agent`) — Omarchy only
-- `./toolbox ask-agent [question...]` — Open the inline answer panel inside Omarchy's search (Super + Space). Requires the `toolbox.ask-agent` plugin (`./omarchy/ask-agent/install.sh`).
-- `./toolbox ask-agent --headless <question...>` — Print an answer to stdout without opening a window (machine-facing: stdout is only the answer, stderr only errors).
-- `./omarchy/ask-agent/install.sh --check` — Validate the plugin with `omarchy plugin validate`, without installing.
-- `./omarchy/ask-agent/install.sh` — Copy the plugin to `~/.config/omarchy/plugins/toolbox.ask-agent/`, enable it (it replaces `omarchy.menu`), retire the old `<username>.menu` patch install, and restart the shell. Backs up to `~/.local/state/toolbox-ask-agent/<timestamp>/`.
-- `./omarchy/ask-agent/test.sh` — Local tests; issues no AI requests.
-- Backend is `$TOOLBOX_AGENT`, else OpenCode when installed, else Omarchy's default agent (`omarchy default agent`); re-read per question. Inline answers: OpenCode (`opencode run --format json` with `OPENCODE_CONFIG_CONTENT` disabling all tools and denying all permissions; 1.x `--pure` and the session deleted afterwards, 2.x `--standalone`; resolved from `mise where opencode` first), Codex (`codex exec --sandbox read-only --ephemeral`) and Claude (`claude --print --tools "" --strict-mcp-config --no-session-persistence`), resolved via `mise which <agent>` then `PATH`. Any other agent makes `answer.sh` exit 3 and the pane offers "Open in <agent>" (`omarchy agent prompt`). `answer.sh --agent-info` prints `{id,name,inline}`. Overrides: `TOOLBOX_AGENT`, `TOOLBOX_AGENT_WORKDIR` (default `~/Work`), `TOOLBOX_AGENT_TIMEOUT` (default `180`), `TOOLBOX_AGENT_BIN` (`TOOLBOX_AGENT_CODEX_BIN` still honored for Codex).
-
-### Calendar (`calendar`) — Omarchy only
-- `./toolbox calendar add [name]` — Add a calendar by its private iCal address (read hidden from the terminal, checked by downloading it, never passed on argv). Stored in `~/.config/toolbox-calendar/calendars.conf` (mode 600).
-- `./toolbox calendar list` / `remove <name|number>` / `sync` / `status` — Manage calendars (addresses masked), sync now, show last sync and errors.
-- `./omarchy/calendar/install.sh [--check]` — Validate, copy to `~/.config/omarchy/plugins/toolbox.calendar/`, and enable (replaces `omarchy.clock`, keeping its bar settings).
-- `./omarchy/calendar/test.sh` — Python recurrence/parsing tests, node tests for `Events.js`, plugin validation. No network.
-- Output: `~/.local/state/toolbox-calendar/events.json`, window 45 days back to 120 days ahead. Bar settings: `nextEventMinutes` (default 60, `0` hides the next event), `notifyMinutes` (default 30, `0` disables notifications).
-
-### Orca (`orca`) — Omarchy only
-- `./toolbox orca [status]` — Orca workspaces and running agents in the terminal. `json` prints the raw snapshot; `focus [terminal-handle]` brings Orca to the front.
-- `./omarchy/orca/install.sh [--check]` — Validate, copy to `~/.config/omarchy/plugins/toolbox.orca/`, enable, and place it after `guibs.workspaces` on first install (an existing bar entry keeps its place).
-- `./omarchy/orca/test.sh` — Node tests for `Model.js`, closed-Orca snapshot, plugin validation. Does not need Orca running.
-- Bar setting: `refreshSeconds` (default 10, minimum 3; the open panel refreshes every 3 s).
-
-### CPU Temp (`cpu-temp`) — Omarchy only
-- `./toolbox cpu-temp [status]` — CPU package and per-core temperatures in the terminal. `json` prints the raw sensor list.
-- `./omarchy/cpu-temp/install.sh [--check]` — Validate, copy to `~/.config/omarchy/plugins/toolbox.cpu-temp/`, enable, and place it after `io.github.kaiizu.runcat` (else on the right) on first install.
-- `./omarchy/cpu-temp/test.sh` — Node tests for `Model.js`, `sensors.sh` against a fake `/sys/class` (`TOOLBOX_CPUTEMP_SYSFS`), plugin validation.
-- Bar settings: `refreshSeconds` (default 2, minimum 1), `alertAt` (°C, default 85, `0` never turns urgent).
-
-### Web Search (`web-search`) — Omarchy only
-- `./toolbox web-search [query...]` — Search the internet in Omarchy's default browser. With no query, opens the `toolbox.web-search` search box.
-- `./omarchy/web-search/install.sh --check` — Validate the plugin and prerequisites (`jq`, `omarchy-launch-browser`) without installing.
-- `./omarchy/web-search/install.sh` — Copy the plugin to `~/.config/omarchy/plugins/toolbox.web-search/` and enable it.
-- `TOOLBOX_SEARCH_URL` — URL template with a literal `%s` placeholder (default Google). Must start with `http://` or `https://`; the query is URL-encoded via `jq -sRr @uri` before substitution.
 
 ### Mac Monitor (`mac-monitor`)
 - `./toolbox mac-monitor setup` — Create `.venv/` and install Glances into it, without starting the collector.
@@ -88,7 +61,7 @@ Guidance for AI coding agents working in this repository.
 ## Repository layout
 
 - `install.sh` — Interactive fresh-machine setup (see above). Not dispatched through `toolbox`; run directly.
-- `toolbox` — Master executable CLI dispatcher. Looks up `tools/<name>/` first, then `apps/<name>/`, then `omarchy/<name>/`, and routes to `manage.sh` or `run.sh`. `list` prints the three groups separately; `new` always scaffolds into `tools/`.
+- `toolbox` — Master executable CLI dispatcher. Looks up `tools/<name>/` first, then `apps/<name>/`, and routes to `manage.sh` or `run.sh`. `list` prints the two groups separately; `new` always scaffolds into `tools/`.
 - `tools/` — Modular tools directory:
   - `tools/README.md` — User documentation (Portuguese) for the tools in `tools/`; the root `README.md` only links to it.
   - `tools/torrent-dl/` — Torrent downloader (magnet link, `.torrent` URL, or local `.torrent` file) via `aria2c`:
@@ -107,6 +80,10 @@ Guidance for AI coding agents working in this repository.
     - `manage.sh` — Tool-specific controller (`start`, `stop`, `status`, `report`, `logs`, `install-service`, `uninstall-service`).
     - `launchd/com.guilhermesalviano.toolbox-monitor.plist.template` — LaunchAgent definition for macOS boot/login persistence. Has no absolute paths baked in; `manage.sh install-service` renders it with the actual `ROOT_DIR`/`HOME` via `sed` before installing, since a clone can live anywhere.
     - `README.md` — Tool documentation (first `# Title` line is shown in `./toolbox list`).
+  - `tools/hypr-desktop/` — Omarchy-style Hyprland desktop for Debian 13:
+    - `run.sh` — Entry point (`install`, `packages`, `configs`, `check`, `status`).
+    - `config/` — Files copied verbatim into `~/.config`: `hypr/` (`hyprland.conf`, `hypridle.conf`, `hyprlock.conf`, `scripts/` power menu, screenshot, wallpaper), `waybar/`, `fuzzel/`, `mako/`, `alacritty/`.
+    - `README.md` — Tool documentation (keybindings).
   - `tools/_template/` — Starter boilerplate for new tools (`run.sh` and `README.md`).
 - `apps/` — GUI applications; dispatched by `./toolbox` just like `tools/`:
   - `apps/README.md` — User documentation (Portuguese) for the apps in `apps/`; the root `README.md` only links to it.
@@ -116,41 +93,6 @@ Guidance for AI coding agents working in this repository.
     - `swain-macros` — Python launcher for the `swain_macros` package.
     - `swain_macros/` — `app.py` (GTK4/libadwaita UI), `engine.py` (grabs the mouse via evdev and re-emits events through `uinput`), `macro.py` (macro language parser/player), `config.py` (`~/.config/swain-macros/config.json`, autostart).
     - `data/` — udev rule, `.desktop` template (`@EXEC@` placeholder), app icon.
-    - `README.md` — Tool documentation.
-- `omarchy/` — Omarchy shell plugins; each folder is a plugin (`manifest.json` + QML) and is also dispatched by `./toolbox` via its `run.sh`. Installers copy only the listed plugin files (no symlinks; `omarchy plugin validate` must pass) to `~/.config/omarchy/plugins/<id>/`:
-  - `omarchy/README.md` — User documentation (Portuguese) for the plugins in `omarchy/`; the root `README.md` only links to it.
-  - `omarchy/ask-agent/` — Plugin `toolbox.ask-agent` (kinds `menu`, `bar-widget`; `clonedFrom: omarchy.menu`, so calls to `omarchy.menu` route to it). Inline AI answers inside the Super + Space search panel:
-    - `manifest.json`, `Menu.qml`, `MenuModel.js`, `BarWidget.qml` — Full copy of Omarchy's stock menu plugin plus the toolbox changes (Ask AI mode, `programs` Apps provider, Search Web fallback row, bundled `menu.jsonc` source). Does not receive upstream menu fixes automatically; diff against `/usr/share/omarchy/shell/plugins/menu/` after Omarchy updates.
-    - `AskPane.qml` — The answer pane; runs the plugin's own `answer.sh`.
-    - `menu.jsonc` — Rows the plugin adds (Ask AI, Search Web, the Apps override), merged between Omarchy's defaults and the user extension.
-    - `run.sh` — Entry point; summons the menu panel, or `--headless` to delegate to `answer.sh`.
-    - `answer.sh` — Machine-facing agent backend (OpenCode by default; OpenCode, Codex, Claude inline; exit 3 for other agents); stdout is only the answer, stderr only errors.
-    - `install.sh` — Stages and validates in a tmpdir, installs and enables the plugin, retires the legacy patched `<username>.menu` clone (marker `.toolbox-ask-agent`), its `~/.local/bin` launcher and extension symlink, then restarts the shell.
-    - `test.sh` — Local tests; issues no AI requests. Not wired into `toolbox`; run directly.
-    - `README.md` — Tool documentation.
-  - `omarchy/calendar/` — Plugin `toolbox.calendar` (kind `bar-widget`; `clonedFrom: omarchy.clock`). Read-only Google Calendar events via private iCal addresses:
-    - `manifest.json`, `BarWidget.qml`, `Panel.qml`, `Model.js` — Omarchy's stock clock plus events: the widget runs `sync.py` every 5 minutes and on popup open, watches `events.json`, and appends the next timed event to the label; the panel adds event dots, day selection, and the selected day's event list.
-    - `Events.js` — Pure event math (normalize, per-day overlap, bar label, click URL, sync status); tested by `test_events.js` under node.
-    - `sync.py` — Standard-library ICS fetch/parse with RRULE expansion (DAILY/WEEKLY/MONTHLY/YEARLY, INTERVAL, COUNT, UNTIL, BYDAY with ordinals, BYMONTHDAY, BYMONTH, BYSETPOS, EXDATE, RECURRENCE-ID overrides). HTTPS only; a failing calendar keeps its previous events. File-locked so several bars do not sync at once. Tested by `test_sync.py`.
-    - `notify.sh` — Sends one event notification via `omarchy notification send` (click opens the link), deduplicated by a stamp directory per occurrence under `~/.local/state/toolbox-calendar/notified/`.
-    - `run.sh` — `toolbox calendar` subcommands.
-    - `install.sh`, `test.sh`, `README.md`.
-  - `omarchy/cpu-temp/` — Plugin `toolbox.cpu-temp` (kind `bar-widget`). CPU temperature always in the bar, read-only:
-    - `manifest.json`, `Panel.qml` — Bar button (thermometer glyph filling towards the sensor's crit limit + package °C, urgent colour at `alertAt`, hidden when no sensor) and dropdown with every core; right click opens btop. Runs `sensors.sh` once, then reads the primary sensor file with a `FileView` every `refreshSeconds` (no process per reading); re-runs discovery when the file stops reading. The open panel re-runs `sensors.sh` every 2 s.
-    - `sensors.sh` — Finds CPU hwmon sensors by driver (`coretemp`, `k10temp`, `zenpower`, `cpu_thermal`), else a CPU thermal zone; prints `{source, sensors: [{label, path, celsius, max, crit}]}`. Always exits 0.
-    - `Model.js` — Pure logic: primary sensor (`Package id`, `Tdie`, `Tctl`…, else hottest), glyph, bar text, alert. Tested by `test_model.js`.
-    - `run.sh`, `install.sh`, `test.sh`, `README.md`.
-  - `omarchy/orca/` — Plugin `toolbox.orca` (kind `bar-widget`). Orca IDE workspaces and running agents, read-only:
-    - `manifest.json`, `Panel.qml` — Bar button (`󰉋 <workspaces>  󰚩 <agents>`, urgent colour when an agent is `blocked`/`waiting`, hidden while Orca is closed) and dropdown list; row click runs `focus.sh`.
-    - `snapshot.sh` — Calls Orca's CLI shim (`~/.config/orca/linux-orca-cli-shim/orca`, override `TOOLBOX_ORCA_CLI`): `worktree ps --json` + `terminal list --json`, merged with `jq`. Always exits 0; `{"running": false, "error": ...}` when Orca is closed. The shim only works while the Orca process it was written for is alive.
-    - `Model.js` — Pure shaping: drops archived worktrees and `done` agents, matches agent `paneKey` (`tabId:leafId`) to terminal handles, sorts needs-you → working → idle. Tested by `test_model.js`. Orca's JSON fields are undocumented (read from Orca 1.4.204).
-    - `focus.sh` — `orca terminal switch --terminal <handle>` then `hyprctl dispatch focuswindow class:^(orca)$`.
-    - `run.sh`, `install.sh`, `test.sh`, `README.md`.
-  - `omarchy/web-search/` — Plugin `toolbox.web-search` (kind `overlay`). Internet search via `omarchy-launch-browser`:
-    - `manifest.json`, `WebSearch.qml` — Search-box overlay; summon payload `{"query": "..."}` searches immediately.
-    - `run.sh` — Entry point; URL-encodes the query and launches the default browser, or opens the search box without a query.
-    - `install.sh` — Stages, validates, installs and enables the plugin. Needs `jq`.
-    - `test.sh` — Local tests. Not wired into `toolbox`; run directly.
     - `README.md` — Tool documentation.
 - `logs/` — Centralized log directory (gitignored):
   - `glances-YYYY-MM-DD.csv` — Daily CSV metric files.
@@ -188,8 +130,8 @@ Guidance for AI coding agents working in this repository.
    - Flush every sample immediately (`f.flush()`) so real-time reports always reflect current data.
 
 3. **Tool Structure**:
-   Every tool inside `tools/<name>/` (or `apps/<name>/`, `omarchy/<name>/`) must:
-   - Be self-contained in its own subdirectory. Put it in `apps/` if it is a GUI application, in `omarchy/` if it is useless outside Omarchy; everything else goes in `tools/`.
+   Every tool inside `tools/<name>/` (or `apps/<name>/`) must:
+   - Be self-contained in its own subdirectory. Put it in `apps/` if it is a GUI application; everything else goes in `tools/`.
    - Provide an executable entrypoint: `manage.sh` (for daemons/services with subcommands) or `run.sh` (for simple runnable scripts).
    - Have a `README.md` whose first line is `# <Tool Name>` so `./toolbox list` can auto-discover it.
    - Use the shared Python virtual environment at `../../.venv/bin/python3` if Python is required. Exception: `swain-macros` uses the system `python3` because PyGObject (GTK) and evdev come from apt.

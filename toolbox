@@ -8,12 +8,10 @@ set -e
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TOOLS_DIR="${DIR}/tools"
 APPS_DIR="${DIR}/apps"
-OMARCHY_DIR="${DIR}/omarchy"
 
 # Diretórios varridos para achar uma ferramenta, em ordem de prioridade.
-# "apps/" guarda aplicativos com interface gráfica; "omarchy/", as
-# integrações que só fazem sentido nessa distro.
-TOOL_DIRS=("${TOOLS_DIR}" "${APPS_DIR}" "${OMARCHY_DIR}")
+# "apps/" guarda aplicativos com interface gráfica.
+TOOL_DIRS=("${TOOLS_DIR}" "${APPS_DIR}")
 
 usage() {
   echo "Uso: ./toolbox <comando|ferramenta> [argumentos...]"
@@ -33,12 +31,11 @@ usage() {
   echo "  ./toolbox mac-monitor report 2026-09-12"
   echo "  ./toolbox new disk-cleaner"
   echo ""
-  echo "As ferramentas ficam em 'tools/', os apps gráficos em 'apps/' e as"
-  echo "integrações específicas do Omarchy em 'omarchy/'."
+  echo "As ferramentas ficam em 'tools/' e os apps gráficos em 'apps/'."
   exit 0
 }
 
-# Lista as ferramentas de um diretório ("tools/" ou "omarchy/").
+# Lista as ferramentas de um diretório ("tools/" ou "apps/").
 list_dir() {
   local dir="$1"
   local tool_path tool_name desc
@@ -72,9 +69,6 @@ cmd_list() {
   echo ""
   echo "-- Apps (interface gráfica) --"
   list_dir "${APPS_DIR}"
-  echo ""
-  echo "-- Omarchy (só funcionam nessa distro) --"
-  list_dir "${OMARCHY_DIR}"
   echo "=========================================="
 }
 

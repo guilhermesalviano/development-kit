@@ -16,9 +16,7 @@ cd tool-box
 
 `install.sh` é interativo: pergunta antes de instalar qualquer coisa (pacotes
 do sistema, aliases no shell, serviços), detecta o que já está presente e
-pula o resto sozinho — por exemplo, as integrações do menu do Omarchy (Ask AI,
-Search Web) só aparecem se o comando `omarchy` existir na máquina. Rodar de
-novo é seguro.
+pula o resto sozinho. Rodar de novo é seguro.
 
 ### 🐚 Zsh + Oh My Zsh
 
@@ -162,54 +160,6 @@ tool-box/
 │       ├── data/               # Regra udev, .desktop e ícone
 │       └── README.md           # Documentação específica do swain-macros
 │
-├── omarchy/                    # Plugins do shell do Omarchy (cada pasta é um plugin)
-│   ├── README.md               # Documentação dos plugins de omarchy/
-│   ├── ask-agent/              # Plugin toolbox.ask-agent: menu com respostas de IA
-│   │   ├── manifest.json       # Manifesto do plugin (substitui o omarchy.menu)
-│   │   ├── Menu.qml            # Menu do Omarchy com Ask AI, lista de Apps e Search Web
-│   │   ├── AskPane.qml         # Painel de resposta dentro do menu
-│   │   ├── menu.jsonc          # Linhas do menu que o plugin adiciona
-│   │   ├── run.sh              # Abre o painel de resposta (ou --headless para scripts)
-│   │   ├── answer.sh           # Backend do agente padrão (stdout = só a resposta)
-│   │   ├── install.sh          # Valida e copia o plugin para ~/.config/omarchy/plugins
-│   │   └── README.md           # Documentação específica do ask-agent
-│   │
-│   ├── calendar/               # Plugin toolbox.calendar: relógio com eventos do Google Calendar
-│   │   ├── manifest.json       # Manifesto do plugin (substitui o omarchy.clock)
-│   │   ├── BarWidget.qml       # Relógio da barra + próximo evento; roda o sync
-│   │   ├── Panel.qml           # Calendário com os eventos do dia selecionado
-│   │   ├── Events.js           # Lógica pura dos eventos (testada com node)
-│   │   ├── sync.py             # Baixa os endereços iCal e expande eventos recorrentes
-│   │   ├── run.sh              # toolbox calendar add|list|remove|sync|status
-│   │   ├── install.sh          # Valida e copia o plugin para ~/.config/omarchy/plugins
-│   │   └── README.md           # Documentação específica do calendar
-│   │
-│   ├── cpu-temp/               # Plugin toolbox.cpu-temp: temperatura da CPU sempre na barra
-│   │   ├── manifest.json       # Manifesto do plugin (bar-widget)
-│   │   ├── Panel.qml           # Botão da barra + temperatura de cada núcleo
-│   │   ├── Model.js            # Lógica pura (sensor principal, ícone, alerta; testada com node)
-│   │   ├── sensors.sh          # Acha os sensores da CPU em /sys/class/hwmon e imprime JSON
-│   │   ├── run.sh              # toolbox cpu-temp status|json
-│   │   ├── install.sh          # Valida, copia e adiciona o plugin à barra
-│   │   └── README.md           # Documentação específica do cpu-temp
-│   │
-│   ├── orca/                   # Plugin toolbox.orca: workspaces e agentes do Orca na barra
-│   │   ├── manifest.json       # Manifesto do plugin (bar-widget)
-│   │   ├── Panel.qml           # Botão da barra + lista de workspaces e agentes
-│   │   ├── Model.js            # Lógica pura dos workspaces/agentes (testada com node)
-│   │   ├── snapshot.sh         # Lê o CLI do Orca (worktree ps / terminal list) em JSON
-│   │   ├── focus.sh            # Traz o Orca para a frente no terminal escolhido
-│   │   ├── run.sh              # toolbox orca status|json|focus
-│   │   ├── install.sh          # Valida, copia e adiciona o plugin à barra
-│   │   └── README.md           # Documentação específica do orca
-│   │
-│   └── web-search/             # Plugin toolbox.web-search: caixa de busca na internet
-│       ├── manifest.json       # Manifesto do plugin (overlay)
-│       ├── WebSearch.qml       # Caixa de busca
-│       ├── run.sh              # Codifica a query e abre o navegador padrão
-│       ├── install.sh          # Valida e copia o plugin para ~/.config/omarchy/plugins
-│       └── README.md           # Documentação específica do web-search
-│
 ├── logs/                       # Diretório central de logs
 │   ├── glances-YYYY-MM-DD.csv  # Arquivos diários gerados pelo mac-monitor
 │   └── ...
@@ -234,14 +184,13 @@ O executável `./toolbox` permite interagir com qualquer ferramenta instalada:
 ```
 
 ### Executando Ferramentas
-Qualquer ferramenta dentro de `tools/<nome>`, `apps/<nome>` (aplicativos
-gráficos) ou `omarchy/<nome>` (só existem no Omarchy) pode ser executada
-diretamente:
+Qualquer ferramenta dentro de `tools/<nome>` ou `apps/<nome>` (aplicativos
+gráficos) pode ser executada diretamente:
 ```bash
 ./toolbox <nome-da-ferramenta> [ação/argumentos]
 ```
 
-`./toolbox list` mostra as três famílias separadamente; `./toolbox new` sempre
+`./toolbox list` mostra as duas famílias separadamente; `./toolbox new` sempre
 cria em `tools/`.
 
 ---
@@ -256,13 +205,6 @@ está em [`tools/README.md`](tools/README.md).
 ## 🖱️ Apps (`apps/`)
 
 A documentação de `swain-macros` está em [`apps/README.md`](apps/README.md).
-
----
-
-## 🟢 Plugins Omarchy (`omarchy/`)
-
-A documentação de `ask-agent`, `calendar`, `cpu-temp`, `orca` e `web-search` está em
-[`omarchy/README.md`](omarchy/README.md).
 
 ---
 
