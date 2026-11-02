@@ -45,6 +45,10 @@ Guidance for AI coding agents working in this repository.
 - `./toolbox swain-macros install` — One-time setup on Ubuntu/GNOME (runs `install.sh`): apt packages, udev rule for the mouse and `/dev/uinput`, app menu entry. Run as the normal user; it calls `sudo` itself.
 - `./toolbox swain-macros [--background]` — Open the GTK app that maps macros to the Redragon Swain side buttons (`--background` starts hidden).
 
+### Mac Fan (`mac-fan`) — GUI app, T2 Macs running Linux
+- `./toolbox mac-fan install` — One-time setup (runs `install.sh`): enables `macsmc_hwmon fan_control` now and via `/etc/modprobe.d/mac-fan.conf`, udev rule chowning `fan*_target` to the user, app menu entry. Run as the normal user; it calls `sudo` itself.
+- `./toolbox mac-fan [--background]` — Open the GTK app: Automatic (SMC) / Fixed speed / Temperature curve modes, full speed at ≥ 90 °C in manual modes, hands the fan back to the SMC (writes `0`) on quit.
+
 ### Mac Monitor (`mac-monitor`)
 - `./toolbox mac-monitor setup` — Create `.venv/` and install Glances into it, without starting the collector.
 - `./toolbox mac-monitor report [YYYY-MM-DD]` — Generate the aggregated CPU and Memory report via AWK (defaults to today).
@@ -94,6 +98,13 @@ Guidance for AI coding agents working in this repository.
     - `swain_macros/` — `app.py` (GTK4/libadwaita UI), `engine.py` (grabs the mouse via evdev and re-emits events through `uinput`), `macro.py` (macro language parser/player), `config.py` (`~/.config/swain-macros/config.json`, autostart).
     - `data/` — udev rule, `.desktop` template (`@EXEC@` placeholder), app icon.
     - `README.md` — Tool documentation.
+  - `apps/mac-fan/` — Fan control for a T2 Mac (Mac mini 2018) running Debian with a T2 kernel, via the `macsmc_hwmon` sysfs interface (`fanN_target`: RPM in `[min,max]` = manual, `0` = automatic):
+    - `run.sh` — Entry point; launches the app, or `install.sh` with `install`.
+    - `install.sh` — One-time setup (modprobe option, udev rule templated with `$USER`, desktop launcher).
+    - `mac-fan` — Python launcher for the `mac_fan` package.
+    - `mac_fan/` — `app.py` (GTK4/libadwaita UI and 2 s control loop), `smc.py` (fan/temperature sysfs access), `config.py` (`~/.config/mac-fan/config.json`, autostart).
+    - `data/` — udev rule (`@USER@` placeholder), `.desktop` template (`@EXEC@` placeholder), SVG icon.
+    - `README.md` — Tool documentation.
 - `logs/` — Centralized log directory (gitignored):
   - `glances-YYYY-MM-DD.csv` — Daily CSV metric files.
   - `monitor.pid` — Process ID file of the active collector.
@@ -134,7 +145,7 @@ Guidance for AI coding agents working in this repository.
    - Be self-contained in its own subdirectory. Put it in `apps/` if it is a GUI application; everything else goes in `tools/`.
    - Provide an executable entrypoint: `manage.sh` (for daemons/services with subcommands) or `run.sh` (for simple runnable scripts).
    - Have a `README.md` whose first line is `# <Tool Name>` so `./toolbox list` can auto-discover it.
-   - Use the shared Python virtual environment at `../../.venv/bin/python3` if Python is required. Exception: `swain-macros` uses the system `python3` because PyGObject (GTK) and evdev come from apt.
+   - Use the shared Python virtual environment at `../../.venv/bin/python3` if Python is required. Exception: `swain-macros` and `mac-fan` use the system `python3` because PyGObject (GTK) and evdev come from apt.
 
 4. **macOS LaunchAgents**:
    - Label naming convention: `com.guilhermesalviano.<service-name>`.

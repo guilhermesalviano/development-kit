@@ -1,0 +1,3 @@
+# Mac Fan: let @USER@ set the fan speed of the Apple SMC (macsmc_hwmon) without root.
+# fan_control must be enabled on the module (see /etc/modprobe.d/mac-fan.conf).
+ACTION=="add|change", SUBSYSTEM=="hwmon", ATTR{name}=="macsmc_hwmon", RUN+="/bin/sh -c 'chown @USER@ /sys%p/fan*_target'"

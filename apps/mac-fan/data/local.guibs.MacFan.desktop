@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Mac Fan
+Comment=Control the fan speed of this Mac
+Exec=@EXEC@
+Icon=local.guibs.MacFan
+Terminal=false
+Categories=Utility;System;HardwareSettings;
+Keywords=fan;smc;temperature;cooling;mac;
+StartupNotify=true

@@ -153,12 +153,18 @@ tool-box/
 │
 ├── apps/                       # Aplicativos com interface gráfica
 │   ├── README.md               # Documentação dos apps de apps/
-│   └── swain-macros/           # App: Macros nos botões laterais do mouse Redragon Swain (Ubuntu)
+│   ├── swain-macros/           # App: Macros nos botões laterais do mouse Redragon Swain (Ubuntu)
+│   │   ├── run.sh              # Abre o app (ou `install` para a configuração inicial)
+│   │   ├── install.sh          # Dependências apt, regra udev e atalho no menu
+│   │   ├── swain_macros/       # App GTK, engine evdev/uinput e linguagem de macros
+│   │   ├── data/               # Regra udev, .desktop e ícone
+│   │   └── README.md           # Documentação específica do swain-macros
+│   └── mac-fan/                # App: Controle da ventoinha de Mac T2 rodando Linux (SMC)
 │       ├── run.sh              # Abre o app (ou `install` para a configuração inicial)
-│       ├── install.sh          # Dependências apt, regra udev e atalho no menu
-│       ├── swain_macros/       # App GTK, engine evdev/uinput e linguagem de macros
+│       ├── install.sh          # Ativa fan_control no driver, regra udev e atalho no menu
+│       ├── mac_fan/            # App GTK, leitura/escrita do SMC via hwmon e config
 │       ├── data/               # Regra udev, .desktop e ícone
-│       └── README.md           # Documentação específica do swain-macros
+│       └── README.md           # Documentação específica do mac-fan
 │
 ├── logs/                       # Diretório central de logs
 │   ├── glances-YYYY-MM-DD.csv  # Arquivos diários gerados pelo mac-monitor
@@ -204,7 +210,7 @@ está em [`tools/README.md`](tools/README.md).
 
 ## 🖱️ Apps (`apps/`)
 
-A documentação de `swain-macros` está em [`apps/README.md`](apps/README.md).
+A documentação de `swain-macros` e `mac-fan` está em [`apps/README.md`](apps/README.md).
 
 ---
 
