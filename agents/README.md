@@ -15,7 +15,12 @@ Install with the [`skills` CLI](https://www.npmjs.com/package/skills) (`npx skil
 - [ponytail](https://github.com/DietrichGebert/ponytail) (DietrichGebert/ponytail): "lazy senior dev" mode, the smallest change that fully solves the task, plus ponytail-audit, ponytail-review, ponytail-debt, ponytail-gain and ponytail-help.
   `npx skills add DietrichGebert/ponytail` (Hermes: `hermes plugins install DietrichGebert/ponytail --enable`)
 
-See [skills.md](skills.md) for the full list of skills inside each pack.
+See [skill/external-skills.md](skill/external-skills.md) for the full list of skills inside each pack.
+
+Own skills live in [`skill/`](skill/), one folder per skill with a `SKILL.md`:
+
+- [ui-motion](skill/ui-motion/SKILL.md): adds, reviews and tunes UI transitions (motion tokens, decision rules, CSS recipes, `motion review` / `motion apply`). Structure inspired by [transitions.dev](https://github.com/Jakubantalik/transitions.dev/tree/main/skills).
+  `npx skills add guilhermesalviano/tool-box --skill ui-motion`
 
 ## Tools
 
