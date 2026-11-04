@@ -16,6 +16,8 @@ Apps, repositories, tables, migrations, routes and queues touched, and why this 
 
 ## Open questions
 
+Questions still waiting on the user, asked interactively. Empty once the Plano técnico is approved.
+
 ## Validation
 
 The test files that carry each acceptance criterion's id, and the checks that were run.
