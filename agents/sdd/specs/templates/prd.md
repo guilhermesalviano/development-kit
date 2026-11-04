@@ -24,4 +24,4 @@ How we will know it worked.
 
 ## Open questions
 
-Every question the user must answer before the spec is written.
+Every question the user must answer before the Plano técnico is written.

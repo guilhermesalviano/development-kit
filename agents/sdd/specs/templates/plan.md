@@ -1,4 +1,4 @@
-# <Title>: spec
+# <Title>: Plano técnico
 
 Status: draft | approved | done | superseded
 
@@ -22,4 +22,4 @@ The test files that carry each acceptance criterion's id, and the checks that we
 
 ## Convergence
 
-The spec re-read against the diff before `done`: `Converged`, or what drifted and where it was recorded.
+The Plano técnico re-read against the diff before `done`: `Converged`, or what drifted and where it was recorded.
