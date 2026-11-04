@@ -1,4 +1,4 @@
-# <Title>: spec
+# <Title>: Plano técnico
 
 Status: draft | approved | done | superseded
 
@@ -16,10 +16,12 @@ Apps, repositories, tables, migrations, routes and queues touched, and why this 
 
 ## Open questions
 
+Questions still waiting on the user, asked interactively. Empty once the Plano técnico is approved.
+
 ## Validation
 
 The test files that carry each acceptance criterion's id, and the checks that were run.
 
 ## Convergence
 
-The spec re-read against the diff before `done`: `Converged`, or what drifted and where it was recorded.
+The Plano técnico re-read against the diff before `done`: `Converged`, or what drifted and where it was recorded.
