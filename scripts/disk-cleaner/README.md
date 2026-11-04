@@ -9,7 +9,7 @@ tamanho estimado antes de pedir confirmação para executar.
 ## 📁 Estrutura da Ferramenta
 
 ```
-tools/disk-cleaner/
+scripts/disk-cleaner/
 ├── run.sh          # Ponto de entrada (detecta o SO e executa as etapas)
 └── README.md       # Documentação desta ferramenta
 ```
@@ -58,25 +58,25 @@ com `-y`.
 
 ```bash
 # Via Toolbox CLI (pede confirmação em cada etapa):
-./toolbox disk-cleaner
+./install.sh disk-cleaner
 
 # Diretamente:
-./tools/disk-cleaner/run.sh
+./scripts/disk-cleaner/run.sh
 
 # Assumir "sim" em todas as etapas, sem perguntar nada:
-./toolbox disk-cleaner --yes
-./toolbox disk-cleaner -y
-./toolbox disk-cleaner --all
+./install.sh disk-cleaner --yes
+./install.sh disk-cleaner -y
+./install.sh disk-cleaner --all
 
 # Ver o que seria limpo sem apagar nada:
-./toolbox disk-cleaner --dry-run
+./install.sh disk-cleaner --dry-run
 
 # Também oferecer limpar volumes Docker não usados (cuidado: pode
 # conter dados de bancos de dados; ainda pede confirmação sem -y):
-./toolbox disk-cleaner --docker-volumes
+./install.sh disk-cleaner --docker-volumes
 
 # Ajuda:
-./toolbox disk-cleaner --help
+./install.sh disk-cleaner --help
 ```
 
 Ao final, o script informa o total de espaço liberado.

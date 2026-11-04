@@ -6,7 +6,7 @@ A small GNOME app for Ubuntu that replaces what the side buttons of the Redragon
 ## Install
 
 ```bash
-./install.sh                     # or: ./toolbox swain-macros install
+./install.sh                     # or: ./install.sh swain-macros install
 ```
 
 Run it as your normal user (it asks for `sudo` when needed). It installs the Python/GTK packages,
@@ -17,7 +17,7 @@ It uses the system `python3`, not the shared `.venv`: PyGObject (GTK) and evdev 
 Note: the udev rule lets any program running as your logged-in user create virtual input devices
 (and so type keystrokes). That's what the app needs to replay macros.
 
-Launch it from the app menu, or with `./toolbox swain-macros` (`--background` starts it hidden).
+Launch it from the app menu, or with `./install.sh swain-macros` (`--background` starts it hidden).
 
 ## Use
 

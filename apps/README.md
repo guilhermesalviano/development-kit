@@ -1,7 +1,7 @@
 # 🖱️ Apps do Tool-Box
 
 Documentação dos aplicativos gráficos em `apps/`. Rodam pelo CLI mestre a
-partir da raiz do repositório: `./toolbox <nome-do-app> [ação/argumentos]`.
+partir da raiz do repositório: `./install.sh <nome-do-app> [ação/argumentos]`.
 
 ---
 
@@ -13,10 +13,10 @@ Usa o `python3` do sistema, não o `.venv`.
 
 ```bash
 # Configuração inicial (uma vez; pede sudo quando precisa):
-./toolbox swain-macros install
+./install.sh swain-macros install
 
 # Abrir o app (ou pelo menu de aplicativos):
-./toolbox swain-macros
+./install.sh swain-macros
 ```
 
 Veja [`swain-macros/README.md`](swain-macros/README.md) para a linguagem de macros e como desinstalar.
@@ -31,10 +31,10 @@ temperatura da CPU. Usa o `python3` do sistema, não o `.venv`.
 
 ```bash
 # Configuração inicial (uma vez; pede sudo quando precisa):
-./toolbox mac-fan install
+./install.sh mac-fan install
 
 # Abrir o app (ou pelo menu de aplicativos):
-./toolbox mac-fan
+./install.sh mac-fan
 ```
 
 Veja [`mac-fan/README.md`](mac-fan/README.md) para os modos, a proteção térmica e como desinstalar.

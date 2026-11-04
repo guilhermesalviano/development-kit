@@ -1,7 +1,7 @@
 # 🧰 Ferramentas do Tool-Box
 
-Documentação das ferramentas em `tools/`. Todas rodam pelo CLI mestre a
-partir da raiz do repositório: `./toolbox <nome-da-ferramenta> [ação/argumentos]`.
+Documentação das ferramentas em `scripts/`. Todas rodam pelo CLI mestre a
+partir da raiz do repositório: `./install.sh <nome-da-ferramenta> [ação/argumentos]`.
 
 ---
 
@@ -12,8 +12,8 @@ local) via `aria2c`. Requer `aria2` instalado (`brew install aria2` no
 macOS, `apt-get install aria2` no Linux).
 
 ```bash
-./toolbox torrent-dl 'magnet:?xt=urn:btih:...'
-./toolbox torrent-dl 'https://exemplo.com/arquivo.torrent' -o ~/Downloads
+./install.sh torrent-dl 'magnet:?xt=urn:btih:...'
+./install.sh torrent-dl 'https://exemplo.com/arquivo.torrent' -o ~/Downloads
 ```
 
 Veja [`torrent-dl/README.md`](torrent-dl/README.md) para todas as opções.
@@ -27,13 +27,13 @@ arquivos temporários seguros. Pede confirmação antes de cada etapa.
 
 ```bash
 # Interativo (pergunta em cada etapa):
-./toolbox disk-cleaner
+./install.sh disk-cleaner
 
 # Assumir "sim" em tudo, exceto nas etapas do Docker (que sempre perguntam):
-./toolbox disk-cleaner --yes
+./install.sh disk-cleaner --yes
 
 # Ver o que seria limpo, sem apagar nada:
-./toolbox disk-cleaner --dry-run
+./install.sh disk-cleaner --dry-run
 ```
 
 Veja [`disk-cleaner/README.md`](disk-cleaner/README.md) para a lista completa de etapas.
@@ -46,9 +46,9 @@ Instala atalhos de shell (`tb`, `tb-clean`, `tb-mon-status`, etc.) para os
 comandos mais usados do Tool-Box.
 
 ```bash
-./toolbox aliases install   # adiciona ao ~/.zshrc ou ~/.bashrc/.bash_profile
-./toolbox aliases list      # lista os atalhos disponíveis
-./toolbox aliases uninstall # remove os atalhos
+./install.sh aliases install   # adiciona ao ~/.zshrc ou ~/.bashrc/.bash_profile
+./install.sh aliases list      # lista os atalhos disponíveis
+./install.sh aliases uninstall # remove os atalhos
 ```
 
 Veja [`aliases/README.md`](aliases/README.md) para a lista completa de atalhos.
@@ -61,10 +61,10 @@ Monitora uso de CPU e Memória RAM continuamente via **Glances** e gera relatór
 ### Gerar Relatório
 ```bash
 # Relatório de hoje:
-./toolbox mac-monitor report
+./install.sh mac-monitor report
 
 # Relatório de uma data específica (ex: 2026-09-12):
-./toolbox mac-monitor report 2026-09-12
+./install.sh mac-monitor report 2026-09-12
 ```
 
 Você também pode executar diretamente o comando AWK bruto sobre o arquivo
@@ -90,16 +90,16 @@ END {
 ### Gerenciamento do Serviço
 ```bash
 # Ver status da execução, PID e amostras de hoje
-./toolbox mac-monitor status
+./install.sh mac-monitor status
 
 # Acompanhar gravação do CSV em tempo real
-./toolbox mac-monitor logs -f
+./install.sh mac-monitor logs -f
 
 # Parar / Reiniciar o monitor
-./toolbox mac-monitor stop
-./toolbox mac-monitor restart
+./install.sh mac-monitor stop
+./install.sh mac-monitor restart
 
 # Instalar / Desinstalar como LaunchAgent no macOS (inicia no boot/login)
-./toolbox mac-monitor install-service
-./toolbox mac-monitor uninstall-service
+./install.sh mac-monitor install-service
+./install.sh mac-monitor uninstall-service
 ```

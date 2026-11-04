@@ -6,7 +6,7 @@ Debian with a T2 Linux kernel. It talks to the Apple SMC through the `macsmc_hwm
 ## Install
 
 ```bash
-./install.sh                     # or: ./toolbox mac-fan install
+./install.sh                     # or: ./install.sh mac-fan install
 ```
 
 Run it as your normal user (it asks for `sudo` when needed). It:
@@ -18,7 +18,7 @@ Run it as your normal user (it asks for `sudo` when needed). It:
 
 It uses the system `python3` (PyGObject/GTK come from apt), not the shared `.venv`.
 
-Launch it from the app menu, or with `./toolbox mac-fan` (`--background` starts it hidden).
+Launch it from the app menu, or with `./install.sh mac-fan` (`--background` starts it hidden).
 
 ## Use
 

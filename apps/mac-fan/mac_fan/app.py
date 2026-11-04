@@ -214,9 +214,9 @@ class App(Adw.Application):
 
         problem = None
         if self.fans and not smc.fan_control_enabled():
-            problem = "Fan control is off in the SMC driver — run ./toolbox mac-fan install"
+            problem = "Fan control is off in the SMC driver — run ./install.sh mac-fan install"
         elif self.fans and not all(f.writable() for f in self.fans):
-            problem = "No permission to set the fan speed — run ./toolbox mac-fan install"
+            problem = "No permission to set the fan speed — run ./install.sh mac-fan install"
         elif self.error:
             problem = self.error
         self.banner.set_title(problem or "")

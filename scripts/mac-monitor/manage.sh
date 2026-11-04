@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# tools/mac-monitor/manage.sh - Gerenciador do Mac Monitor (Glances)
+# scripts/mac-monitor/manage.sh - Gerenciador do Mac Monitor (Glances)
 #
 
 set -e

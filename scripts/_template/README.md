@@ -8,8 +8,8 @@ Descrição breve do que esta ferramenta ou script faz.
 
 ```bash
 # Via Toolbox CLI:
-./toolbox <nome-da-ferramenta> [argumentos]
+./install.sh <nome-da-ferramenta> [argumentos]
 
 # Diretamente:
-./tools/<nome-da-ferramenta>/run.sh [argumentos]
+./scripts/<nome-da-ferramenta>/run.sh [argumentos]
 ```

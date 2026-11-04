@@ -13,7 +13,7 @@ END_MARKER="# <<< tool-box aliases <<<"
 
 usage() {
   cat <<EOF
-Uso: ./toolbox aliases <comando>
+Uso: ./install.sh aliases <comando>
 
 Comandos:
   install      Adiciona os atalhos ao(s) arquivo(s) de configuração do seu shell.
@@ -89,7 +89,7 @@ cmd_install() {
     echo "Para usar agora, rode 'source ~/.zshrc' (ou ~/.bashrc / ~/.bash_profile)"
     echo "ou simplesmente abra um novo terminal."
   fi
-  echo "Veja os atalhos disponíveis com: ./toolbox aliases list"
+  echo "Veja os atalhos disponíveis com: ./install.sh aliases list"
 }
 
 remove_block_from_file() {

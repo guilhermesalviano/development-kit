@@ -4,82 +4,84 @@ Guidance for AI coding agents working in this repository.
 
 ## What this is
 
-`tool-box` is a modular collection of server and macOS automation scripts, background monitors, and system utilities. Each tool lives in an isolated folder under `tools/<name>/` — or under `apps/<name>/` for GUI applications — and is dispatched through the unified `./toolbox` CLI.
+`tool-box` is a modular collection of server and macOS automation scripts, background monitors, and system utilities. Each tool lives in an isolated folder under `scripts/<name>/` — or under `apps/<name>/` for GUI applications — and is dispatched through the unified `./install.sh` CLI.
 
 ---
 
 ## Commands
 
-### Fresh-machine setup (`./install.sh`)
+`./install.sh` is the single entry point: with no arguments (or `setup`) it runs the interactive setup; with arguments it is the tool CLI.
+
+### Fresh-machine setup (`./install.sh` / `./install.sh setup`)
 - `./install.sh` — Interactive, idempotent setup for a new clone: first offers zsh + Oh My Zsh (unattended; old `~/.zshrc` saved as `~/.zshrc.pre-oh-my-zsh`) with the `zsh-autosuggestions`, `zsh-syntax-highlighting` and `fast-syntax-highlighting` plugins cloned into `$ZSH_CUSTOM/plugins`, enabled via a `# >>> tool-box zsh plugins >>>` block in `~/.zshrc` (only `fast-syntax-highlighting` is sourced — the two highlighters conflict; `zsh-syntax-highlighting` is the fallback), and `chsh` to zsh. This runs before the aliases step so aliases land in the new `~/.zshrc`. Then offers to install shell aliases, checks/offers to install each tool's external dependency (`aria2`, `python3`, `jq`, `ripgrep`), offers `git-delta` and, once `delta` is on `PATH`, sets it as the global git pager (`core.pager`, `interactive.diffFilter`, `delta.navigate`, `delta.side-by-side`, `diff.algorithm histogram`; warns before replacing another pager), bootstraps the mac-monitor virtualenv. Confirms before any system-modifying step (package install, LaunchAgent, shell rc edits); safe to re-run.
 
-### Global CLI (`./toolbox`)
-- `./toolbox list` — List all installed tools and their descriptions.
-- `./toolbox new <tool-name>` — Scaffold a new tool from `tools/_template/`.
-- `./toolbox <tool-name> [action|args]` — Dispatch a command to a specific tool.
+### Global CLI (`./install.sh <command>`)
+- `./install.sh help` — Show usage.
+- `./install.sh list` — List all installed tools and their descriptions.
+- `./install.sh new <tool-name>` — Scaffold a new tool from `scripts/_template/`.
+- `./install.sh <tool-name> [action|args]` — Dispatch a command to a specific tool.
 
 ### Torrent DL (`torrent-dl`)
-- `./toolbox torrent-dl '<link>'` — Download a torrent from a magnet link, a `.torrent` URL, or a local `.torrent` file, via `aria2c` (must be installed separately: `brew install aria2` / `apt-get install aria2`).
-- `./toolbox torrent-dl '<link>' -o <dir>` — Set the destination directory (default `~/Downloads/torrents`).
-- `./toolbox torrent-dl '<link>' -s <minutes>` — Keep seeding for N minutes after completion (default `0`, no seeding).
+- `./install.sh torrent-dl '<link>'` — Download a torrent from a magnet link, a `.torrent` URL, or a local `.torrent` file, via `aria2c` (must be installed separately: `brew install aria2` / `apt-get install aria2`).
+- `./install.sh torrent-dl '<link>' -o <dir>` — Set the destination directory (default `~/Downloads/torrents`).
+- `./install.sh torrent-dl '<link>' -s <minutes>` — Keep seeding for N minutes after completion (default `0`, no seeding).
 
 ### Disk Cleaner (`disk-cleaner`)
-- `./toolbox disk-cleaner` — Interactively clean caches, trash, and temp files on macOS or Linux (asks per step).
-- `./toolbox disk-cleaner --yes|--all` — Assume "yes" for every step, except the Docker steps (see below), which always prompt.
-- `./toolbox disk-cleaner --dry-run` — Preview what would be cleaned without deleting anything.
-- `./toolbox disk-cleaner --docker-volumes` — Also offer to prune unused Docker volumes (off by default; may contain database data).
+- `./install.sh disk-cleaner` — Interactively clean caches, trash, and temp files on macOS or Linux (asks per step).
+- `./install.sh disk-cleaner --yes|--all` — Assume "yes" for every step, except the Docker steps (see below), which always prompt.
+- `./install.sh disk-cleaner --dry-run` — Preview what would be cleaned without deleting anything.
+- `./install.sh disk-cleaner --docker-volumes` — Also offer to prune unused Docker volumes (off by default; may contain database data).
 
 ### Aliases (`aliases`)
-- `./toolbox aliases install` — Add Tool-Box shell aliases (`tb`, `tb-clean`, `tb-mon-*`, etc.) to `~/.zshrc`/`~/.bashrc`/`~/.bash_profile`, detected from the account login shell (`getent passwd` / `dscl`, so it is correct right after a `chsh`), falling back to `$SHELL`. Idempotent, marked by `# >>> tool-box aliases >>>` / `# <<< tool-box aliases <<<`.
-- `./toolbox aliases uninstall` — Remove that marked block.
-- `./toolbox aliases status` — Show which rc files have the aliases installed.
-- `./toolbox aliases list` — List all available aliases and what they expand to.
+- `./install.sh aliases install` — Add Tool-Box shell aliases (`tb`, `tb-clean`, `tb-mon-*`, etc.) to `~/.zshrc`/`~/.bashrc`/`~/.bash_profile`, detected from the account login shell (`getent passwd` / `dscl`, so it is correct right after a `chsh`), falling back to `$SHELL`. Idempotent, marked by `# >>> tool-box aliases >>>` / `# <<< tool-box aliases <<<`.
+- `./install.sh aliases uninstall` — Remove that marked block.
+- `./install.sh aliases status` — Show which rc files have the aliases installed.
+- `./install.sh aliases list` — List all available aliases and what they expand to.
 
 ### Swain Macros (`swain-macros`) — GUI app
-- `./toolbox swain-macros install` — One-time setup on Ubuntu/GNOME (runs `install.sh`): apt packages, udev rule for the mouse and `/dev/uinput`, app menu entry. Run as the normal user; it calls `sudo` itself.
-- `./toolbox swain-macros [--background]` — Open the GTK app that maps macros to the Redragon Swain side buttons (`--background` starts hidden).
+- `./install.sh swain-macros install` — One-time setup on Ubuntu/GNOME (runs `install.sh`): apt packages, udev rule for the mouse and `/dev/uinput`, app menu entry. Run as the normal user; it calls `sudo` itself.
+- `./install.sh swain-macros [--background]` — Open the GTK app that maps macros to the Redragon Swain side buttons (`--background` starts hidden).
 
 ### Mac Fan (`mac-fan`) — GUI app, T2 Macs running Linux
-- `./toolbox mac-fan install` — One-time setup (runs `install.sh`): enables `macsmc_hwmon fan_control` now and via `/etc/modprobe.d/mac-fan.conf`, udev rule chowning `fan*_target` to the user, app menu entry. Run as the normal user; it calls `sudo` itself.
-- `./toolbox mac-fan [--background]` — Open the GTK app: Automatic (SMC) / Fixed speed / Temperature curve modes, full speed at ≥ 90 °C in manual modes, hands the fan back to the SMC (writes `0`) on quit.
+- `./install.sh mac-fan install` — One-time setup (runs `install.sh`): enables `macsmc_hwmon fan_control` now and via `/etc/modprobe.d/mac-fan.conf`, udev rule chowning `fan*_target` to the user, app menu entry. Run as the normal user; it calls `sudo` itself.
+- `./install.sh mac-fan [--background]` — Open the GTK app: Automatic (SMC) / Fixed speed / Temperature curve modes, full speed at ≥ 90 °C in manual modes, hands the fan back to the SMC (writes `0`) on quit.
 
 ### Mac Monitor (`mac-monitor`)
-- `./toolbox mac-monitor setup` — Create `.venv/` and install Glances into it, without starting the collector.
-- `./toolbox mac-monitor report [YYYY-MM-DD]` — Generate the aggregated CPU and Memory report via AWK (defaults to today).
-- `./toolbox mac-monitor status` — Check if the monitor daemon and LaunchAgent are active, sample count, and log file size.
-- `./toolbox mac-monitor logs [-f]` — View the latest CSV log lines (`-f` to follow in real-time).
-- `./toolbox mac-monitor start` — Start the collector daemon in the background.
-- `./toolbox mac-monitor stop` — Stop the collector daemon.
-- `./toolbox mac-monitor restart` — Restart the collector daemon.
-- `./toolbox mac-monitor install-service` — Install and load the macOS LaunchAgent (`~/Library/LaunchAgents/com.guilhermesalviano.toolbox-monitor.plist`).
-- `./toolbox mac-monitor uninstall-service` — Unload and remove the LaunchAgent.
+- `./install.sh mac-monitor setup` — Create `.venv/` and install Glances into it, without starting the collector.
+- `./install.sh mac-monitor report [YYYY-MM-DD]` — Generate the aggregated CPU and Memory report via AWK (defaults to today).
+- `./install.sh mac-monitor status` — Check if the monitor daemon and LaunchAgent are active, sample count, and log file size.
+- `./install.sh mac-monitor logs [-f]` — View the latest CSV log lines (`-f` to follow in real-time).
+- `./install.sh mac-monitor start` — Start the collector daemon in the background.
+- `./install.sh mac-monitor stop` — Stop the collector daemon.
+- `./install.sh mac-monitor restart` — Restart the collector daemon.
+- `./install.sh mac-monitor install-service` — Install and load the macOS LaunchAgent (`~/Library/LaunchAgents/com.guilhermesalviano.toolbox-monitor.plist`).
+- `./install.sh mac-monitor uninstall-service` — Unload and remove the LaunchAgent.
 
 ---
 
 ## Repository layout
 
-- `install.sh` — Interactive fresh-machine setup (see above). Not dispatched through `toolbox`; run directly.
-- `toolbox` — Master executable CLI dispatcher. Looks up `tools/<name>/` first, then `apps/<name>/`, and routes to `manage.sh` or `run.sh`. `list` prints the two groups separately; `new` always scaffolds into `tools/`.
-- `tools/` — Modular tools directory:
-  - `tools/README.md` — User documentation (Portuguese) for the tools in `tools/`; the root `README.md` only links to it.
-  - `tools/torrent-dl/` — Torrent downloader (magnet link, `.torrent` URL, or local `.torrent` file) via `aria2c`:
+- `install.sh` — Single entry point. No arguments (or `setup`): interactive fresh-machine setup (see above). With arguments: the CLI dispatcher — `list`, `new`, `help`, or `<tool>`. Looks up `scripts/<name>/` first, then `apps/<name>/`, and routes to `manage.sh` or `run.sh`. `list` prints the two groups separately; `new` always scaffolds into `scripts/`.
+- `scripts/` — Modular tools directory:
+  - `scripts/README.md` — User documentation (Portuguese) for the tools in `scripts/`; the root `README.md` only links to it.
+  - `scripts/torrent-dl/` — Torrent downloader (magnet link, `.torrent` URL, or local `.torrent` file) via `aria2c`:
     - `run.sh` — Entry point; `-o/--output`, `-s/--seed-minutes` flags.
     - `README.md` — Tool documentation.
-  - `tools/disk-cleaner/` — Cross-platform (macOS/Linux) disk space cleaner:
+  - `scripts/disk-cleaner/` — Cross-platform (macOS/Linux) disk space cleaner:
     - `run.sh` — Interactive cleanup script; asks per step, `-y`/`--all`/`--dry-run`/`--docker-volumes` flags.
     - `README.md` — Tool documentation.
-  - `tools/aliases/` — Shell alias installer for the Tool-Box CLI:
+  - `scripts/aliases/` — Shell alias installer for the Tool-Box CLI:
     - `aliases.sh` — Self-locating alias definitions (sourced, not executed; works from bash and zsh).
     - `manage.sh` — Tool-specific controller (`install`, `uninstall`, `status`, `list`).
     - `README.md` — Tool documentation.
-  - `tools/mac-monitor/` — Continuous Mac CPU & Memory monitor:
+  - `scripts/mac-monitor/` — Continuous Mac CPU & Memory monitor:
     - `collector.py` — Python streaming collector daemon reading metrics from Glances and handling midnight CSV rotation.
     - `report.sh` — AWK script calculating daily mean CPU, max CPU, mean Memory, max Memory, and sample count.
     - `manage.sh` — Tool-specific controller (`start`, `stop`, `status`, `report`, `logs`, `install-service`, `uninstall-service`).
     - `launchd/com.guilhermesalviano.toolbox-monitor.plist.template` — LaunchAgent definition for macOS boot/login persistence. Has no absolute paths baked in; `manage.sh install-service` renders it with the actual `ROOT_DIR`/`HOME` via `sed` before installing, since a clone can live anywhere.
-    - `README.md` — Tool documentation (first `# Title` line is shown in `./toolbox list`).
-  - `tools/_template/` — Starter boilerplate for new tools (`run.sh` and `README.md`).
-- `apps/` — GUI applications; dispatched by `./toolbox` just like `tools/`:
+    - `README.md` — Tool documentation (first `# Title` line is shown in `./install.sh list`).
+  - `scripts/_template/` — Starter boilerplate for new tools (`run.sh` and `README.md`).
+- `apps/` — GUI applications; dispatched by `./install.sh` just like `scripts/`:
   - `apps/README.md` — User documentation (Portuguese) for the apps in `apps/`; the root `README.md` only links to it.
   - `apps/swain-macros/` — Linux (Ubuntu/GNOME, Wayland and X11) macro app for the Redragon Swain mouse side buttons (Holtek `04d9:fc63`):
     - `run.sh` — Entry point; launches the app, or `install.sh` with `install`.
@@ -131,15 +133,15 @@ Guidance for AI coding agents working in this repository.
    - Flush every sample immediately (`f.flush()`) so real-time reports always reflect current data.
 
 3. **Tool Structure**:
-   Every tool inside `tools/<name>/` (or `apps/<name>/`) must:
-   - Be self-contained in its own subdirectory. Put it in `apps/` if it is a GUI application; everything else goes in `tools/`.
+   Every tool inside `scripts/<name>/` (or `apps/<name>/`) must:
+   - Be self-contained in its own subdirectory. Put it in `apps/` if it is a GUI application; everything else goes in `scripts/`.
    - Provide an executable entrypoint: `manage.sh` (for daemons/services with subcommands) or `run.sh` (for simple runnable scripts).
-   - Have a `README.md` whose first line is `# <Tool Name>` so `./toolbox list` can auto-discover it.
+   - Have a `README.md` whose first line is `# <Tool Name>` so `./install.sh list` can auto-discover it.
    - Use the shared Python virtual environment at `../../.venv/bin/python3` if Python is required. Exception: `swain-macros` and `mac-fan` use the system `python3` because PyGObject (GTK) and evdev come from apt.
 
 4. **macOS LaunchAgents**:
    - Label naming convention: `com.guilhermesalviano.<service-name>`.
-   - Ship a `.plist.template` in `tools/<name>/launchd/`, never a plist with real paths baked in — a clone can live anywhere. Use `__PLACEHOLDER__` tokens and have the tool's `install-service` command render them via `sed` (see `mac-monitor/manage.sh`) into `${HOME}/Library/LaunchAgents/`.
+   - Ship a `.plist.template` in `scripts/<name>/launchd/`, never a plist with real paths baked in — a clone can live anywhere. Use `__PLACEHOLDER__` tokens and have the tool's `install-service` command render them via `sed` (see `mac-monitor/manage.sh`) into `${HOME}/Library/LaunchAgents/`.
    - Set `WorkingDirectory` to the `tool-box` project root.
    - Use absolute paths in `ProgramArguments` pointing to `.venv/bin/python3` and the tool script.
 
@@ -149,12 +151,12 @@ Guidance for AI coding agents working in this repository.
 
 1. Scaffold using the CLI:
    ```bash
-   ./toolbox new <tool-name>
+   ./install.sh new <tool-name>
    ```
-2. Implement your logic in `tools/<tool-name>/run.sh` (or create Python/Bash scripts in that folder).
-3. Update `tools/<tool-name>/README.md` with description and instructions.
+2. Implement your logic in `scripts/<tool-name>/run.sh` (or create Python/Bash scripts in that folder).
+3. Update `scripts/<tool-name>/README.md` with description and instructions.
 4. Verify with:
    ```bash
-   ./toolbox list
-   ./toolbox <tool-name>
+   ./install.sh list
+   ./install.sh <tool-name>
    ```

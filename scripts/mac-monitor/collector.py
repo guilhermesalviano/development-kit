@@ -79,7 +79,7 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    # Resolve project root: tools/mac-monitor -> tool-box root
+    # Resolve project root: scripts/mac-monitor -> tool-box root
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     default_logs_dir = os.path.join(project_root, "logs")
     default_interval = int(os.environ.get("MONITOR_INTERVAL", 5))

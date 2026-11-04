@@ -19,8 +19,8 @@ TOTAL_FREED_KB=0
 
 usage() {
   cat <<EOF
-Uso: ./toolbox disk-cleaner [opções]
-     ./tools/disk-cleaner/run.sh [opções]
+Uso: ./install.sh disk-cleaner [opções]
+     ./scripts/disk-cleaner/run.sh [opções]
 
 Limpa caches, lixeira e arquivos temporários seguros para liberar espaço
 em disco, em macOS ou Linux. Cada etapa mostra o que será feito e pede

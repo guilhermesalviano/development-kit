@@ -27,7 +27,7 @@ instalação correto para o seu sistema caso não encontre.
 ## 📁 Estrutura da Ferramenta
 
 ```
-tools/torrent-dl/
+scripts/torrent-dl/
 ├── run.sh      # Ponto de entrada
 └── README.md   # Documentação desta ferramenta
 ```
@@ -38,10 +38,10 @@ tools/torrent-dl/
 
 ```bash
 # Via Toolbox CLI:
-./toolbox torrent-dl '<link>' [opções]
+./install.sh torrent-dl '<link>' [opções]
 
 # Diretamente:
-./tools/torrent-dl/run.sh '<link>' [opções]
+./scripts/torrent-dl/run.sh '<link>' [opções]
 ```
 
 O `<link>` pode ser:
@@ -60,11 +60,11 @@ O `<link>` pode ser:
 ### Exemplos
 
 ```bash
-./toolbox torrent-dl 'magnet:?xt=urn:btih:...'
+./install.sh torrent-dl 'magnet:?xt=urn:btih:...'
 
-./toolbox torrent-dl 'https://exemplo.com/arquivo.torrent' -o ~/Downloads
+./install.sh torrent-dl 'https://exemplo.com/arquivo.torrent' -o ~/Downloads
 
-./toolbox torrent-dl ./arquivo.torrent -s 30
+./install.sh torrent-dl ./arquivo.torrent -s 30
 ```
 
 Use `Ctrl+C` para interromper — o `aria2c` grava um arquivo `.aria2` de

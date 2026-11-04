@@ -7,7 +7,7 @@ Monitor contínuo de uso de CPU e Memória para macOS, registrando métricas em 
 ## 📁 Estrutura da Ferramenta
 
 ```
-tools/mac-monitor/
+scripts/mac-monitor/
 ├── collector.py       # Coletor em tempo real via Glances (daemon)
 ├── report.sh          # Script AWK para gerar relatório agregado
 ├── manage.sh          # Script de controle (start/stop/status/service)
@@ -37,10 +37,10 @@ now.iso,now.custom,cpu.total,mem.used,mem.percent
 
 ```bash
 # Relatório de hoje
-./tools/mac-monitor/report.sh
+./scripts/mac-monitor/report.sh
 
 # Gerenciar o serviço localmente
-./tools/mac-monitor/manage.sh status
-./tools/mac-monitor/manage.sh restart
-./tools/mac-monitor/manage.sh logs -f
+./scripts/mac-monitor/manage.sh status
+./scripts/mac-monitor/manage.sh restart
+./scripts/mac-monitor/manage.sh logs -f
 ```

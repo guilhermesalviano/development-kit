@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# install.sh - Instalação interativa do Tool-Box em uma máquina nova.
+# install.sh - Instalação interativa e CLI do Tool-Box.
 #
 # Percorre cada ferramenta, mostra o que falta e pergunta antes de instalar
 # qualquer coisa (pacotes do sistema, aliases no shell, serviços). Não
@@ -66,6 +66,147 @@ pkg_install() {
     return 1
   fi
 }
+
+# --- CLI (list / new / <ferramenta>) -------------------------------------------
+#
+# Com argumentos, este script é o CLI do Tool-Box: lista, cria e executa as
+# ferramentas de scripts/ e apps/. Sem argumentos (ou com "setup"), roda a
+# instalação interativa logo abaixo.
+
+SCRIPTS_DIR="${ROOT_DIR}/scripts"
+APPS_DIR="${ROOT_DIR}/apps"
+
+# Diretórios varridos para achar uma ferramenta, em ordem de prioridade.
+# "apps/" guarda aplicativos com interface gráfica.
+TOOL_DIRS=("${SCRIPTS_DIR}" "${APPS_DIR}")
+
+usage() {
+  cat <<EOF
+Uso: ./install.sh [comando|ferramenta] [argumentos...]
+
+Sem argumentos, roda a instalação interativa (o mesmo que 'setup').
+
+Comandos disponíveis:
+  setup                 Instalação interativa (padrão quando não há argumentos)
+  list                  Lista todas as ferramentas disponíveis
+  new <nome>            Cria uma nova ferramenta a partir do template
+  help                  Exibe esta mensagem de ajuda
+
+Executar uma ferramenta:
+  ./install.sh <ferramenta> [ação/argumentos]
+
+Exemplos:
+  ./install.sh list
+  ./install.sh mac-monitor status
+  ./install.sh mac-monitor report 2026-09-12
+  ./install.sh new backup-system
+
+As ferramentas ficam em 'scripts/' e os apps gráficos em 'apps/'.
+EOF
+}
+
+# Lista as ferramentas de um diretório ("scripts/" ou "apps/").
+list_dir() {
+  local dir="$1" tool_path tool_name desc
+
+  if [[ ! -d "${dir}" ]]; then
+    echo "  (nenhuma ferramenta em ${dir})"
+    return 0
+  fi
+
+  for tool_path in "${dir}"/*; do
+    [[ -d "${tool_path}" ]] || continue
+    tool_name=$(basename "${tool_path}")
+    [[ "${tool_name}" == _* ]] && continue
+
+    desc="Sem descrição"
+    if [[ -f "${tool_path}/README.md" ]]; then
+      desc=$(grep -m 1 -E '^# ' "${tool_path}/README.md" | sed 's/^# //')
+      [[ -n "${desc}" ]] || desc="Sem descrição"
+    fi
+    printf "  %-20s - %s\n" "${tool_name}" "${desc}"
+  done
+}
+
+cmd_list() {
+  echo "=========================================="
+  echo "Ferramentas instaladas no Tool-Box"
+  echo "=========================================="
+  list_dir "${SCRIPTS_DIR}"
+  echo ""
+  echo "-- Apps (interface gráfica) --"
+  list_dir "${APPS_DIR}"
+  echo "=========================================="
+}
+
+# Ecoa o caminho da ferramenta "$1", procurando em TOOL_DIRS.
+find_tool() {
+  local name="$1" dir
+  for dir in "${TOOL_DIRS[@]}"; do
+    if [[ -d "${dir}/${name}" ]]; then
+      echo "${dir}/${name}"
+      return 0
+    fi
+  done
+  return 1
+}
+
+cmd_new() {
+  local tool_name="${1:-}"
+  if [[ -z "${tool_name}" ]]; then
+    echo "Erro: Informe o nome da nova ferramenta." >&2
+    echo "Exemplo: ./install.sh new backup-system" >&2
+    exit 1
+  fi
+
+  local target_dir="${SCRIPTS_DIR}/${tool_name}"
+  if [[ -e "${target_dir}" ]]; then
+    echo "Erro: A ferramenta '${tool_name}' já existe em ${target_dir}." >&2
+    exit 1
+  fi
+
+  echo "Criando nova ferramenta '${tool_name}' a partir do template..."
+  cp -r "${SCRIPTS_DIR}/_template" "${target_dir}" || exit 1
+  echo "Ferramenta criada com sucesso em ${target_dir}!"
+  echo "Edite ${target_dir}/run.sh e ${target_dir}/README.md para começar."
+}
+
+cmd_run_tool() {
+  local name="$1" tool_path
+  shift
+  if ! tool_path="$(find_tool "${name}")"; then
+    echo "Erro: Ferramenta '${name}' não encontrada." >&2
+    echo "Execute './install.sh list' para ver as ferramentas disponíveis." >&2
+    exit 1
+  fi
+
+  if [[ -x "${tool_path}/manage.sh" ]]; then
+    exec "${tool_path}/manage.sh" "$@"
+  elif [[ -x "${tool_path}/run.sh" ]]; then
+    exec "${tool_path}/run.sh" "$@"
+  elif [[ -x "${tool_path}/${name}.sh" ]]; then
+    exec "${tool_path}/${name}.sh" "$@"
+  elif [[ -x "${tool_path}/${name}.py" ]]; then
+    exec "${ROOT_DIR}/.venv/bin/python3" "${tool_path}/${name}.py" "$@"
+  else
+    echo "Erro: Nenhum script executável (manage.sh, run.sh) encontrado em ${tool_path}" >&2
+    exit 1
+  fi
+}
+
+if [[ $# -gt 0 ]]; then
+  ACTION="$1"
+  shift
+  case "${ACTION}" in
+    setup)            ;;  # segue para a instalação interativa abaixo
+    list|--list|-l)   cmd_list; exit 0 ;;
+    new|create)       cmd_new "$@"; exit 0 ;;
+    help|--help|-h)   usage; exit 0 ;;
+    *)                cmd_run_tool "${ACTION}" "$@" ;;
+  esac
+fi
+
+# --- Instalação interativa -----------------------------------------------------
 
 echo "Tool-Box - instalação interativa"
 echo "================================="
@@ -177,9 +318,9 @@ fi
 
 section "Atalhos de shell (tb, tb-clean, tb-mon-*, ...)"
 if confirm "Instalar os atalhos do Tool-Box no seu shell?"; then
-  "${ROOT_DIR}/toolbox" aliases install
+  "${ROOT_DIR}/install.sh" aliases install
 else
-  echo "Pulado. Rode '${ROOT_DIR}/toolbox aliases install' quando quiser."
+  echo "Pulado. Rode '${ROOT_DIR}/install.sh aliases install' quando quiser."
 fi
 
 # --- RTK (Rust Token Killer) -------------------------------------------------
@@ -286,7 +427,7 @@ section "Torrent DL (aria2)"
 if have aria2c; then
   echo "aria2c já está instalado."
 else
-  echo "aria2c não encontrado (necessário para './toolbox torrent-dl')."
+  echo "aria2c não encontrado (necessário para './install.sh torrent-dl')."
   pkg_install aria2 || true
 fi
 
@@ -294,25 +435,25 @@ fi
 
 section "Disk Cleaner"
 echo "Sem pré-requisitos — usa apenas utilitários já presentes no macOS/Linux."
-echo "Pronto para usar: ./toolbox disk-cleaner --dry-run"
+echo "Pronto para usar: ./install.sh disk-cleaner --dry-run"
 
 # --- Mac/System Monitor ----------------------------------------------------
 
 section "Mac/System Monitor (Glances)"
 if have python3; then
   if confirm "Criar o virtualenv e instalar o Glances agora?"; then
-    "${ROOT_DIR}/toolbox" mac-monitor setup
+    "${ROOT_DIR}/install.sh" mac-monitor setup
     if [[ "${OS}" == "Darwin" ]]; then
       if confirm "Instalar como LaunchAgent (inicia sozinho no login)?"; then
-        "${ROOT_DIR}/toolbox" mac-monitor install-service
+        "${ROOT_DIR}/install.sh" mac-monitor install-service
       else
-        echo "Pulado. Rode './toolbox mac-monitor install-service' quando quiser."
+        echo "Pulado. Rode './install.sh mac-monitor install-service' quando quiser."
       fi
     else
-      echo "LaunchAgent é exclusivo de macOS — use './toolbox mac-monitor start' para rodar em primeiro plano."
+      echo "LaunchAgent é exclusivo de macOS — use './install.sh mac-monitor start' para rodar em primeiro plano."
     fi
   else
-    echo "Pulado. Rode './toolbox mac-monitor start' quando quiser."
+    echo "Pulado. Rode './install.sh mac-monitor start' quando quiser."
   fi
 else
   echo "python3 não encontrado — necessário para o mac-monitor." >&2
@@ -320,7 +461,7 @@ else
 fi
 
 section "Pronto"
-"${ROOT_DIR}/toolbox" list
+cmd_list
 echo ""
 if [[ "${RELOGIN_NEEDED}" == true ]]; then
   echo "Saia e entre de novo na sessão (ou rode 'exec zsh') para usar o zsh, os plugins e os atalhos."

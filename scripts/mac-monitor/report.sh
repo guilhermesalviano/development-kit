@@ -3,9 +3,9 @@
 # report.sh - Gera o relatório de uso da máquina a partir dos logs diários do Glances
 #
 # Uso:
-#   ./tools/mac-monitor/report.sh              # Gera o relatório de hoje
-#   ./tools/mac-monitor/report.sh YYYY-MM-DD   # Gera o relatório de uma data específica
-#   ./tools/mac-monitor/report.sh /path/to.csv # Gera o relatório de um arquivo CSV específico
+#   ./scripts/mac-monitor/report.sh              # Gera o relatório de hoje
+#   ./scripts/mac-monitor/report.sh YYYY-MM-DD   # Gera o relatório de uma data específica
+#   ./scripts/mac-monitor/report.sh /path/to.csv # Gera o relatório de um arquivo CSV específico
 
 set -e
 

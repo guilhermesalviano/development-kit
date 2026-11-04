@@ -2,7 +2,7 @@
 
 Repositório modular de utilitários, automações e scripts de manutenção para macOS / servidor.
 
-A estrutura foi projetada para suportar múltiplos scripts e ferramentas de forma isolada, padronizada e fácil de gerenciar através de um CLI unificado (`./toolbox`).
+A estrutura foi projetada para suportar múltiplos scripts e ferramentas de forma isolada, padronizada e fácil de gerenciar através de um CLI unificado (`./install.sh`).
 
 ---
 
@@ -17,6 +17,10 @@ cd tool-box
 `install.sh` é interativo: pergunta antes de instalar qualquer coisa (pacotes
 do sistema, aliases no shell, serviços), detecta o que já está presente e
 pula o resto sozinho. Rodar de novo é seguro.
+
+O mesmo `install.sh` também é o CLI das ferramentas: sem argumentos (ou com
+`setup`) roda a instalação; com argumentos lista, cria e executa ferramentas
+(veja [CLI Mestre](#-cli-mestre-installsh)).
 
 ### 🐚 Zsh + Oh My Zsh
 
@@ -122,10 +126,9 @@ modo de uma coluna; `git --no-pager diff` desliga o delta numa chamada. Para des
 
 ```text
 tool-box/
-├── install.sh                  # Instalação interativa para uma máquina nova
-├── toolbox                     # CLI mestre para listar, criar e executar qualquer ferramenta
-├── tools/                      # Diretório de ferramentas modulares e isoladas
-│   ├── README.md               # Documentação das ferramentas de tools/
+├── install.sh                  # Instalação interativa (sem argumentos) e CLI mestre (list/new/<ferramenta>)
+├── scripts/                    # Diretório de ferramentas modulares e isoladas
+│   ├── README.md               # Documentação das ferramentas de scripts/
 │   ├── torrent-dl/             # Ferramenta: Download de torrent via aria2c
 │   │   ├── run.sh              # Script de download (-o/--output, -s/--seed-minutes)
 │   │   └── README.md           # Documentação específica do torrent-dl
@@ -176,35 +179,36 @@ tool-box/
 
 ---
 
-## ⚡ CLI Mestre (`./toolbox`)
+## ⚡ CLI Mestre (`./install.sh`)
 
-O executável `./toolbox` permite interagir com qualquer ferramenta instalada:
+Com argumentos, o `./install.sh` deixa de instalar e passa a interagir com
+qualquer ferramenta instalada (`./install.sh help` mostra o uso):
 
 ### Comandos Gerais
 ```bash
 # Listar todas as ferramentas instaladas
-./toolbox list
+./install.sh list
 
 # Criar uma nova ferramenta a partir do template padrão
-./toolbox new <nome-da-ferramenta>
+./install.sh new <nome-da-ferramenta>
 ```
 
 ### Executando Ferramentas
-Qualquer ferramenta dentro de `tools/<nome>` ou `apps/<nome>` (aplicativos
+Qualquer ferramenta dentro de `scripts/<nome>` ou `apps/<nome>` (aplicativos
 gráficos) pode ser executada diretamente:
 ```bash
-./toolbox <nome-da-ferramenta> [ação/argumentos]
+./install.sh <nome-da-ferramenta> [ação/argumentos]
 ```
 
-`./toolbox list` mostra as duas famílias separadamente; `./toolbox new` sempre
-cria em `tools/`.
+`./install.sh list` mostra as duas famílias separadamente; `./install.sh new`
+sempre cria em `scripts/`.
 
 ---
 
-## 🛠️ Ferramentas (`tools/`)
+## 🛠️ Ferramentas (`scripts/`)
 
 A documentação de `torrent-dl`, `disk-cleaner`, `aliases` e `mac-monitor`
-está em [`tools/README.md`](tools/README.md).
+está em [`scripts/README.md`](scripts/README.md).
 
 ---
 
@@ -216,14 +220,14 @@ A documentação de `swain-macros` e `mac-fan` está em [`apps/README.md`](apps/
 
 ## ➕ Como Adicionar uma Nova Ferramenta
 
-Para adicionar um novo script ou serviço na toolbox:
+Para adicionar um novo script ou serviço no Tool-Box:
 
 1. **Crie a nova ferramenta**:
    ```bash
-   ./toolbox new disk-cleaner
+   ./install.sh new disk-cleaner
    ```
-2. **Implemente o script** em `tools/disk-cleaner/run.sh` (ou crie scripts Python/Bash adicionais na mesma pasta).
+2. **Implemente o script** em `scripts/disk-cleaner/run.sh` (ou crie scripts Python/Bash adicionais na mesma pasta).
 3. **Execute através do CLI mestre**:
    ```bash
-   ./toolbox disk-cleaner
+   ./install.sh disk-cleaner
    ```

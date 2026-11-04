@@ -12,8 +12,8 @@ LINK=""
 
 usage() {
   cat <<EOF
-Uso: ./toolbox torrent-dl <link> [opções]
-     ./tools/torrent-dl/run.sh <link> [opções]
+Uso: ./install.sh torrent-dl <link> [opções]
+     ./scripts/torrent-dl/run.sh <link> [opções]
 
 Baixa um torrent a partir de:
   - um link magnet ("magnet:?xt=...")
@@ -27,9 +27,9 @@ Opções:
   -h, --help               Exibe esta mensagem de ajuda
 
 Exemplos:
-  ./toolbox torrent-dl 'magnet:?xt=urn:btih:...'
-  ./toolbox torrent-dl 'https://exemplo.com/arquivo.torrent' -o ~/Downloads
-  ./toolbox torrent-dl ./arquivo.torrent -s 30
+  ./install.sh torrent-dl 'magnet:?xt=urn:btih:...'
+  ./install.sh torrent-dl 'https://exemplo.com/arquivo.torrent' -o ~/Downloads
+  ./install.sh torrent-dl ./arquivo.torrent -s 30
 
 Use apenas para conteúdo que você tem o direito de baixar/distribuir.
 EOF

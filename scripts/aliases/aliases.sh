@@ -3,7 +3,7 @@
 # aliases.sh - Atalhos de shell para o Tool-Box.
 #
 # Não execute este arquivo diretamente: ele é feito para ser "sourced"
-# (bash ou zsh). Use "./toolbox aliases install" para configurar isso
+# (bash ou zsh). Use "./install.sh aliases install" para configurar isso
 # automaticamente no seu ~/.zshrc / ~/.bashrc.
 #
 # Este arquivo se autolocaliza, então funciona não importa onde o
@@ -26,7 +26,7 @@ fi
 _tb_root="$(cd "$(dirname "${_tb_aliases_self}")/../.." && pwd)"
 
 # --- Geral ---------------------------------------------------------------
-alias tb="${_tb_root}/toolbox"
+alias tb="${_tb_root}/install.sh"
 alias tbl="tb list"
 alias tbn="tb new"
 
