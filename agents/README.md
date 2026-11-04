@@ -49,4 +49,6 @@ _Nothing yet._ Put agent definitions in [`agents/`](agents/).
 
 ## Prompts
 
-_Nothing yet._ Put reusable prompts in [`prompts/`](prompts/).
+[`prompts/`](prompts/) holds ready-to-paste prompts:
+
+- [`audit.md`](prompts/audit.md): audits a project for bugs, security issues, optimizations, portability, docs drift and more. It stops on every confirmed finding and asks whether to fix it now, continue or stop, then returns the full list of findings with their status.
